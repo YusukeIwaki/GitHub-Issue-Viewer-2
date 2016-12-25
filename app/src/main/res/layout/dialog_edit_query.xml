@@ -4,49 +4,57 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minWidth="280dp"
-    android:padding="24dp">
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_email"
+    android:minWidth="280dp">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:errorEnabled="true"
-        >
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editor_title"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/title"
-            android:singleLine="true"
-            />
-    </android.support.design.widget.TextInputLayout>
+            app:errorEnabled="true"
+            >
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_query"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/editor_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/title"
+                android:singleLine="true"
+                />
+        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editor_query"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_query"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/query"
-            android:inputType="textWebEditText"
-            android:singleLine="true"
-            />
-    </android.support.design.widget.TextInputLayout>
+            >
 
-    <Space
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/editor_query"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/query"
+                android:inputType="textWebEditText"
+                android:singleLine="true"
+                />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="8dp" />
-    <Button
-        android:id="@+id/btn_add_search_query"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:text="@android:string/ok"
-        android:layout_gravity="end"/>
-
+        android:padding="8dp">
+        <Button
+            android:id="@+id/btn_add_search_query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:text="@android:string/ok"
+            android:layout_gravity="end"/>
+    </FrameLayout>
 </LinearLayout>
