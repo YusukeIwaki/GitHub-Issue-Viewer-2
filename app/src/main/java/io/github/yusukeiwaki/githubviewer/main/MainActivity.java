@@ -3,17 +3,15 @@ package io.github.yusukeiwaki.githubviewer.main;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import org.json.JSONObject;
 
@@ -27,7 +25,6 @@ import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
 import io.github.yusukeiwaki.githubviewer.main.dialog.EditQueryDialogFragment;
 import io.github.yusukeiwaki.githubviewer.model.User;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
-import io.github.yusukeiwaki.githubviewer.renderer.UserRenderer;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 import io.realm.Realm;
 import jp.co.crowdworks.realm_java_helpers.RealmHelper;
@@ -35,6 +32,7 @@ import rx.functions.Action0;
 
 public class MainActivity extends AbstractCurrentUserActivity {
 
+    private SideNavManager sideNavManager;
     private SideNavQueryListManager queryListManager;
 
     @State long currentQueryItemId;
@@ -52,32 +50,14 @@ public class MainActivity extends AbstractCurrentUserActivity {
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        findViewById(R.id.btn_add_search_query).setOnClickListener(new View.OnClickListener() {
+        sideNavManager = new SideNavManager(this, (LinearLayout) findViewById(R.id.side_nav_container), new SideNavManager.DrawerHandler() {
             @Override
-            public void onClick(View view) {
-                new EditQueryDialogFragment().show(getSupportFragmentManager(), EditQueryDialogFragment.class.getSimpleName());
+            public void closeDrawer() {
+                closeDrawerIfNeeded();
             }
         });
-        findViewById(R.id.nav_item_logout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.dialog_title_logout)
-                        .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                CurrentUserData.deleteAll(MainActivity.this);
-                            }
-                        })
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                closeDrawerIfNeeded();
-                            }
-                        })
-                        .show();
-            }
-        });
+        sideNavManager.setup();
+
         queryListManager = new SideNavQueryListManager((LinearLayout) findViewById(R.id.side_query_item_container));
         queryListManager.setOnItemClicked(new SideNavQueryListManager.Callback() {
             @Override
@@ -109,6 +89,22 @@ public class MainActivity extends AbstractCurrentUserActivity {
         currentQueryItemId = showFragmentForCurrentQueryItemId(Cache.get(this));
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // re-render Side menu avatar.
+            User currentUser = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
+                @Override
+                public User execute(Realm realm) throws Throwable {
+                    return User.queryUserById(realm, currentUserId).findFirst();
+                }
+            });
+            sideNavManager.updateCurrentUser(currentUser);
+        }
+    }
+
     private long showFragmentForCurrentQueryItemId(SharedPreferences prefs) {
         final long itemId = prefs.getLong(Cache.KEY_QUERY_ITEM_ID, -1);
         if (itemId != -1) {
@@ -128,10 +124,8 @@ public class MainActivity extends AbstractCurrentUserActivity {
     }
 
     @Override
-    protected void onRenderCurrentUser(User currentUser) {
-        new UserRenderer(this, currentUser)
-                .avatarInto((ImageView) findViewById(R.id.current_user_avatar))
-                .usernameInto((TextView) findViewById(R.id.current_user_name));
+    protected void onCurrentUserUpdated(User currentUser) {
+        sideNavManager.updateCurrentUser(currentUser);
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener cacheListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -147,17 +141,17 @@ public class MainActivity extends AbstractCurrentUserActivity {
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         queryListManager.sub();
         Cache.get(this).registerOnSharedPreferenceChangeListener(cacheListener);
     }
 
     @Override
-    protected void onStop() {
+    protected void onPause() {
         Cache.get(this).unregisterOnSharedPreferenceChangeListener(cacheListener);
         queryListManager.unsub();
-        super.onStop();
+        super.onPause();
     }
 
     @Override

@@ -14,10 +14,9 @@ import org.json.JSONObject;
 
 import bolts.Continuation;
 import bolts.Task;
-import io.github.yusukeiwaki.githubviewer.LaunchUtil;
+import io.github.yusukeiwaki.githubviewer.AbstractAuthStateObservingActivity;
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
-import io.github.yusukeiwaki.githubviewer.AbstractAuthStateObservingActivity;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 
 /**
@@ -97,7 +96,7 @@ public class LoginActivity extends AbstractAuthStateObservingActivity {
 
     @Override
     protected void onTokenVerified() {
-        LaunchUtil.showMainActivity(this);
+        finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 

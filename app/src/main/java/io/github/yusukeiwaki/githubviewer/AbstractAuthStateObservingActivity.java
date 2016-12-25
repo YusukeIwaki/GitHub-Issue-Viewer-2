@@ -27,6 +27,13 @@ public abstract class AbstractAuthStateObservingActivity extends AbstractActivit
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateTokenFromCacheIfNeeded(CurrentUserData.get(this));
+        onTokenUpdated();
+    }
+
     private SharedPreferences.OnSharedPreferenceChangeListener currentUserDataListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -39,8 +46,8 @@ public abstract class AbstractAuthStateObservingActivity extends AbstractActivit
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         SharedPreferences prefs = CurrentUserData.get(this);
         if (updateTokenFromCacheIfNeeded(prefs)) {
@@ -50,9 +57,9 @@ public abstract class AbstractAuthStateObservingActivity extends AbstractActivit
     }
 
     @Override
-    protected void onStop() {
+    protected void onPause() {
         CurrentUserData.get(this).unregisterOnSharedPreferenceChangeListener(currentUserDataListener);
-        super.onStop();
+        super.onPause();
     }
 
     private boolean updateTokenFromCacheIfNeeded(SharedPreferences cache) {

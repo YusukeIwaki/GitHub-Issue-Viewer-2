@@ -1,5 +1,7 @@
 package io.github.yusukeiwaki.githubviewer.main;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -23,15 +25,26 @@ public class HomeFragment extends AbstractCurrentUserFragment {
     }
 
     @Override
-    protected void onRenderCurrentUser(User user) {
+    protected void onCreateView(@Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected void onCurrentUserUpdated(User user) {
         new UserRenderer(getContext(), user).avatarInto((ImageView) rootView.findViewById(R.id.current_user_avatar));
-        final String username = user.getLogin();
-        rootView.findViewById(R.id.add_query_involves_me).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addQueryInvolvesMe(username);
-            }
-        });
+
+        if (user != null) {
+            final String username = user.getLogin();
+            rootView.findViewById(R.id.add_query_involves_me).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addQueryInvolvesMe(username);
+                }
+            });
+        } else {
+            rootView.findViewById(R.id.add_query_involves_me).setOnClickListener(null);
+            rootView.findViewById(R.id.add_query_involves_me).setClickable(false);
+        }
     }
 
     private void addQueryInvolvesMe(final String username) {
