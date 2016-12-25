@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer.model;
+package io.github.yusukeiwaki.githubviewer;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import icepick.State;
-import io.github.yusukeiwaki.githubviewer.AbstractActivity;
 import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
 
 /**

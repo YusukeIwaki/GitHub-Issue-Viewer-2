@@ -17,7 +17,7 @@ import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.LaunchUtil;
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
-import io.github.yusukeiwaki.githubviewer.model.AbstractAuthStateObservingActivity;
+import io.github.yusukeiwaki.githubviewer.AbstractAuthStateObservingActivity;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 
 /**

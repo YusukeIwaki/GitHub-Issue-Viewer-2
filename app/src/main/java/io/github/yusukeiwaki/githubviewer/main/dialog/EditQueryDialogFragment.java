@@ -7,8 +7,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.cache.Cache;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
@@ -80,13 +78,7 @@ public class EditQueryDialogFragment extends DialogFragment {
         RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Throwable {
-                realm.createOrUpdateObjectFromJson(SearchIssueQuery.class, new JSONObject()
-                        .put("id", queryId)
-                        .put("title", title)
-                        .put("q", queryText)
-                        .put("order", "desc")
-                        .put("page", 1)
-                        .put("sort", "updated"));
+                SearchIssueQuery.insertRecord(realm, queryId, title, queryText);
                 return null;
             }
         }).subscribe(new Action0() {

@@ -6,6 +6,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="caption_add_query_involves_me">「自分に関係のあるissue」をみる</string>
+
     <string name="edit">編集</string>
     <string name="delete">削除</string>
     <string name="caption_add_search_query">+ 検索条件を追加</string>

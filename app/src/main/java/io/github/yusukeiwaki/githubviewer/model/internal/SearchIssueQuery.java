@@ -1,5 +1,9 @@
 package io.github.yusukeiwaki.githubviewer.model.internal;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -77,5 +81,15 @@ public class SearchIssueQuery extends RealmObject {
 
     public void setUnreadCount(int unreadCount) {
         this.unreadCount = unreadCount;
+    }
+
+    public static void insertRecord(Realm realm, long queryId, String title, String queryText) throws JSONException {
+        realm.createOrUpdateObjectFromJson(SearchIssueQuery.class, new JSONObject()
+                .put("id", queryId)
+                .put("title", title)
+                .put("q", queryText)
+                .put("order", "desc")
+                .put("page", 1)
+                .put("sort", "updated"));
     }
 }

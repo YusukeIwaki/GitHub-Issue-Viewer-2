@@ -20,12 +20,11 @@ import org.json.JSONObject;
 import bolts.Continuation;
 import bolts.Task;
 import icepick.State;
+import io.github.yusukeiwaki.githubviewer.LaunchUtil;
+import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.cache.Cache;
 import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
 import io.github.yusukeiwaki.githubviewer.main.dialog.EditQueryDialogFragment;
-import io.github.yusukeiwaki.githubviewer.LaunchUtil;
-import io.github.yusukeiwaki.githubviewer.R;
-import io.github.yusukeiwaki.githubviewer.model.AbstractAuthStateObservingActivity;
 import io.github.yusukeiwaki.githubviewer.model.User;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer.renderer.UserRenderer;
@@ -34,14 +33,11 @@ import io.realm.Realm;
 import jp.co.crowdworks.realm_java_helpers.RealmHelper;
 import rx.functions.Action0;
 
-public class MainActivity extends AbstractAuthStateObservingActivity {
+public class MainActivity extends AbstractCurrentUserActivity {
 
     private SideNavQueryListManager queryListManager;
 
     @State long currentQueryItemId;
-
-    @State long currentUserId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +107,6 @@ public class MainActivity extends AbstractAuthStateObservingActivity {
         });
 
         currentQueryItemId = showFragmentForCurrentQueryItemId(Cache.get(this));
-        currentUserId = renderCurrentUser(CurrentUserData.get(this));
     }
 
     private long showFragmentForCurrentQueryItemId(SharedPreferences prefs) {
@@ -132,24 +127,8 @@ public class MainActivity extends AbstractAuthStateObservingActivity {
         return -1;
     }
 
-    private long renderCurrentUser(SharedPreferences prefs) {
-        final long currentUserId = prefs.getLong(CurrentUserData.KEY_USER_ID, -1);
-        if (currentUserId != -1) {
-            User user = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
-                @Override
-                public User execute(Realm realm) throws Throwable {
-                    return realm.where(User.class).equalTo("id", currentUserId).findFirst();
-                }
-            });
-            if (user != null) {
-                onRenderCurrentUser(user);
-                return currentUserId;
-            }
-        }
-        return -1;
-    }
-
-    private void onRenderCurrentUser(User currentUser) {
+    @Override
+    protected void onRenderCurrentUser(User currentUser) {
         new UserRenderer(this, currentUser)
                 .avatarInto((ImageView) findViewById(R.id.current_user_avatar))
                 .usernameInto((TextView) findViewById(R.id.current_user_name));
@@ -167,31 +146,15 @@ public class MainActivity extends AbstractAuthStateObservingActivity {
         }
     };
 
-    private SharedPreferences.OnSharedPreferenceChangeListener currentUserListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-            if (CurrentUserData.KEY_USER_ID.equals(key)) {
-                long userId = prefs.getLong(key, -1);
-                if (userId != currentUserId) {
-                    currentUserId = renderCurrentUser(prefs);
-                }
-            }
-        }
-    };
-
     @Override
     protected void onStart() {
         super.onStart();
         queryListManager.sub();
         Cache.get(this).registerOnSharedPreferenceChangeListener(cacheListener);
-        SharedPreferences prefs = CurrentUserData.get(this);
-        currentUserId = renderCurrentUser(prefs);
-        prefs.registerOnSharedPreferenceChangeListener(currentUserListener);
     }
 
     @Override
     protected void onStop() {
-        CurrentUserData.get(this).unregisterOnSharedPreferenceChangeListener(currentUserListener);
         Cache.get(this).unregisterOnSharedPreferenceChangeListener(cacheListener);
         queryListManager.unsub();
         super.onStop();
