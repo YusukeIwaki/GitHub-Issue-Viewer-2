@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer.fragment;
+package io.github.yusukeiwaki.githubviewer.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +10,7 @@ import jp.co.crowdworks.realm_java_helpers.RealmHelper;
 
 /**
  */
-public class SearchResultFragment extends AbstractFragment {
+public class SearchResultFragment extends AbstractMainFragment {
     public SearchResultFragment(){}
 
     private SearchIssueQuery searchIssueQuery;

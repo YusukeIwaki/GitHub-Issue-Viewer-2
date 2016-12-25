@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer.fragment;
+package io.github.yusukeiwaki.githubviewer.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 /**
  */
-public abstract class AbstractFragment extends Fragment {
+public abstract class AbstractMainFragment extends Fragment {
     protected ActionBar activityToolbar;
     protected View rootView;
 

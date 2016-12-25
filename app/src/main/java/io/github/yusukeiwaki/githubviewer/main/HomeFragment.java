@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer.fragment;
+package io.github.yusukeiwaki.githubviewer.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,7 +7,7 @@ import io.github.yusukeiwaki.githubviewer.R;
 
 /**
  */
-public class HomeFragment extends AbstractFragment {
+public class HomeFragment extends AbstractMainFragment {
     public HomeFragment(){}
 
     @Override

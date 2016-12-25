@@ -14,8 +14,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
-import io.github.yusukeiwaki.githubviewer.fragment.HomeFragment;
-import io.github.yusukeiwaki.githubviewer.fragment.SearchResultFragment;
+import io.github.yusukeiwaki.githubviewer.main.HomeFragment;
+import io.github.yusukeiwaki.githubviewer.main.SearchResultFragment;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.realm.Realm;
 import jp.co.crowdworks.realm_java_helpers.RealmHelper;
