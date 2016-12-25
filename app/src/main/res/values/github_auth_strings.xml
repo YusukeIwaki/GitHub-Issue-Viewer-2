@@ -2,4 +2,7 @@
 <resources>
     <string name="github_client_id">fa751378d1a88edaa521</string>
     <string name="github_client_secret">f784bf0102934d3635de9d8074de6900ba49f6e6</string>
+    <string name="github_oauth_callback_scheme">githubviewer</string>
+    <string name="github_oauth_callback_host">oauth</string>
+    <string name="github_oauth_callback_path">/callback</string>
 </resources>

@@ -18,6 +18,7 @@ allprojects {
         jcenter()
         maven { url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo' }
         maven { url 'https://github.com/YusukeIwaki/realm-java-helpers/raw/master/repo' }
+        maven { url "https://clojars.org/repo/" }
     }
 }
 

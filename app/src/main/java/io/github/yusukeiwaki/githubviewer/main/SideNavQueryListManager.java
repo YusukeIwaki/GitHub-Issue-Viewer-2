@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer;
+package io.github.yusukeiwaki.githubviewer.main;
 
 import android.content.Context;
 import android.view.View;

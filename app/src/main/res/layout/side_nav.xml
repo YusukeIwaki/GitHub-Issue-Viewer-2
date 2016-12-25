@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -21,8 +22,27 @@
             android:id="@+id/btn_add_search_query"
             android:layout_width="match_parent"
             android:layout_height="?attr/listPreferredItemHeight"
-            android:text="+ 検索条件を追加"
+            android:text="@string/caption_add_search_query"
             style="@style/Widget.AppCompat.Button.Borderless"/>
+
+        <io.github.yusukeiwaki.githubviewer.widget.DividerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!--io.github.yusukeiwaki.githubviewer.widget.SideMenuItemView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:materialIcon="@string/material_icon_settings"
+            android:title="@string/settings"
+            /-->
+
+        <io.github.yusukeiwaki.githubviewer.widget.SideMenuItemView
+            android:id="@+id/nav_item_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:materialIcon="@string/material_icon_logout"
+            android:title="@string/logout"
+            />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

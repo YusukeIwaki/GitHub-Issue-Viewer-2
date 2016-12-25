@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer;
+package io.github.yusukeiwaki.githubviewer.cache;
 
 import android.content.Context;
 import android.content.SharedPreferences;

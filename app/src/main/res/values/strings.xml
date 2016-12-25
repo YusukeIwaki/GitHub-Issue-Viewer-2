@@ -1,8 +1,20 @@
 <resources>
     <string name="app_name">GitHubViewer</string>
 
+    <string name="dialog_title_failed_to_authorize">認証に失敗</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="edit">編集</string>
+    <string name="delete">削除</string>
+    <string name="caption_add_search_query">+ 検索条件を追加</string>
+    <string name="dialog_title_logout">ログアウトしますか？</string>
+
+    <string name="login">ログイン</string>
+    <string name="title">タイトル</string>
+    <string name="query">検索クエリ</string>
+    <string name="retry">再試行</string>
+    <string name="settings">設定</string>
+    <string name="logout">ログアウト</string>
 </resources>

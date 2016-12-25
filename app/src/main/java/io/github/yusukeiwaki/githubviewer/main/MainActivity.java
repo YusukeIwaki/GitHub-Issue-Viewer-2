@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer;
+package io.github.yusukeiwaki.githubviewer.main;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -8,23 +8,39 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import io.github.yusukeiwaki.githubviewer.main.HomeFragment;
-import io.github.yusukeiwaki.githubviewer.main.SearchResultFragment;
+import org.json.JSONObject;
+
+import bolts.Continuation;
+import bolts.Task;
+import icepick.State;
+import io.github.yusukeiwaki.githubviewer.cache.Cache;
+import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
+import io.github.yusukeiwaki.githubviewer.main.dialog.EditQueryDialogFragment;
+import io.github.yusukeiwaki.githubviewer.LaunchUtil;
+import io.github.yusukeiwaki.githubviewer.R;
+import io.github.yusukeiwaki.githubviewer.model.AbstractAuthStateObservingActivity;
+import io.github.yusukeiwaki.githubviewer.model.User;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
+import io.github.yusukeiwaki.githubviewer.renderer.UserRenderer;
+import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 import io.realm.Realm;
 import jp.co.crowdworks.realm_java_helpers.RealmHelper;
 import rx.functions.Action0;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AbstractAuthStateObservingActivity {
 
-    SideNavQueryListManager queryListManager;
-    private long currentQueryItemId;
+    private SideNavQueryListManager queryListManager;
+
+    @State long currentQueryItemId;
+
+    @State long currentUserId;
 
 
     @Override
@@ -46,6 +62,26 @@ public class MainActivity extends AppCompatActivity {
                 new EditQueryDialogFragment().show(getSupportFragmentManager(), EditQueryDialogFragment.class.getSimpleName());
             }
         });
+        findViewById(R.id.nav_item_logout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.dialog_title_logout)
+                        .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                CurrentUserData.deleteAll(MainActivity.this);
+                            }
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                closeDrawerIfNeeded();
+                            }
+                        })
+                        .show();
+            }
+        });
         queryListManager = new SideNavQueryListManager((LinearLayout) findViewById(R.id.side_query_item_container));
         queryListManager.setOnItemClicked(new SideNavQueryListManager.Callback() {
             @Override
@@ -60,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(final long itemId) {
                 new AlertDialog.Builder(MainActivity.this)
-                        .setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{"edit", "delete"}), new DialogInterface.OnClickListener() {
+                        .setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{getString(R.string.edit), getString(R.string.delete)}), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
@@ -75,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         currentQueryItemId = showFragmentForCurrentQueryItemId(Cache.get(this));
+        currentUserId = renderCurrentUser(CurrentUserData.get(this));
     }
 
     private long showFragmentForCurrentQueryItemId(SharedPreferences prefs) {
@@ -95,6 +132,29 @@ public class MainActivity extends AppCompatActivity {
         return -1;
     }
 
+    private long renderCurrentUser(SharedPreferences prefs) {
+        final long currentUserId = prefs.getLong(CurrentUserData.KEY_USER_ID, -1);
+        if (currentUserId != -1) {
+            User user = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
+                @Override
+                public User execute(Realm realm) throws Throwable {
+                    return realm.where(User.class).equalTo("id", currentUserId).findFirst();
+                }
+            });
+            if (user != null) {
+                onRenderCurrentUser(user);
+                return currentUserId;
+            }
+        }
+        return -1;
+    }
+
+    private void onRenderCurrentUser(User currentUser) {
+        new UserRenderer(this, currentUser)
+                .avatarInto((ImageView) findViewById(R.id.current_user_avatar))
+                .usernameInto((TextView) findViewById(R.id.current_user_name));
+    }
+
     private SharedPreferences.OnSharedPreferenceChangeListener cacheListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -107,18 +167,66 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private SharedPreferences.OnSharedPreferenceChangeListener currentUserListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if (CurrentUserData.KEY_USER_ID.equals(key)) {
+                long userId = prefs.getLong(key, -1);
+                if (userId != currentUserId) {
+                    currentUserId = renderCurrentUser(prefs);
+                }
+            }
+        }
+    };
+
     @Override
     protected void onStart() {
         super.onStart();
         queryListManager.sub();
         Cache.get(this).registerOnSharedPreferenceChangeListener(cacheListener);
+        SharedPreferences prefs = CurrentUserData.get(this);
+        currentUserId = renderCurrentUser(prefs);
+        prefs.registerOnSharedPreferenceChangeListener(currentUserListener);
     }
 
     @Override
     protected void onStop() {
+        CurrentUserData.get(this).unregisterOnSharedPreferenceChangeListener(currentUserListener);
         Cache.get(this).unregisterOnSharedPreferenceChangeListener(cacheListener);
         queryListManager.unsub();
         super.onStop();
+    }
+
+    @Override
+    protected void onAuthRequired() {
+        LaunchUtil.showLoginActivity(this, null);
+    }
+
+    @Override
+    protected void onTokenVerified() {
+        new GitHubAPI(this).getCurrentUser()
+                .onSuccess(new Continuation<JSONObject, Object>() {
+                    @Override
+                    public Object then(Task<JSONObject> task) throws Exception {
+                        final JSONObject userJson = task.getResult();
+                        final long userId = userJson.getLong("id");
+                        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+                            @Override
+                            public Object execute(Realm realm) throws Throwable {
+                                realm.createOrUpdateObjectFromJson(User.class, userJson);
+                                return null;
+                            }
+                        }).subscribe(new Action0() {
+                            @Override
+                            public void call() {
+                                CurrentUserData.get(MainActivity.this).edit()
+                                        .putLong(CurrentUserData.KEY_USER_ID, userId)
+                                        .apply();
+                            }
+                        });
+                        return null;
+                    }
+                });
     }
 
     @Override

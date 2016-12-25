@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SideMenuItemView">
+        <attr name="android:title"/>
+        <attr format="string" name="materialIcon"/>
+    </declare-styleable>
+</resources>

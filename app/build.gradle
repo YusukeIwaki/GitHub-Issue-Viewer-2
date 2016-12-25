@@ -25,7 +25,15 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     compile project(':widgets')
     compile 'jp.co.crowdworks:realm-java-helpers:0.0.9'
+    compile 'com.parse.bolts:bolts-tasks:1.4.0'
 
-    compile 'com.facebook.stetho:stetho:1.4.1'
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.facebook.stetho:stetho:1.4.2'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
     compile 'com.uphyca:stetho_realm:2.0.0'
+
+    compile 'frankiesardo:icepick:3.2.0'
+    provided 'frankiesardo:icepick-processor:3.2.0'
 }

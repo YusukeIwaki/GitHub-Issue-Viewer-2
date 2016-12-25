@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer;
+package io.github.yusukeiwaki.githubviewer.main.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import io.github.yusukeiwaki.githubviewer.R;
+import io.github.yusukeiwaki.githubviewer.cache.Cache;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.realm.Realm;
 import jp.co.crowdworks.realm_java_helpers.RealmHelper;
