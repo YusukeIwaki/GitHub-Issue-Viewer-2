@@ -12,7 +12,7 @@ public class SearchIssueProcedure extends RealmObject {
     private int syncState;
     private SearchIssueQuery query;
     private long total_count;
-    private RealmList<Issue> results;
+    private RealmList<Issue> items;
 
     public long getQueryId() {
         return queryId;
@@ -46,11 +46,11 @@ public class SearchIssueProcedure extends RealmObject {
         this.total_count = total_count;
     }
 
-    public RealmList<Issue> getResults() {
-        return results;
+    public RealmList<Issue> getItems() {
+        return items;
     }
 
-    public void setResults(RealmList<Issue> results) {
-        this.results = results;
+    public void setItems(RealmList<Issue> items) {
+        this.items = items;
     }
 }

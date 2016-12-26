@@ -12,10 +12,12 @@ import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.model.SyncState;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
+import io.github.yusukeiwaki.githubviewer.service.GitHubViewerService;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import jp.co.crowdworks.realm_java_helpers.RealmHelper;
 import jp.co.crowdworks.realm_java_helpers.RealmObjectObserver;
+import rx.functions.Action0;
 
 /**
  */
@@ -82,20 +84,12 @@ public class SearchResultFragment extends AbstractMainFragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
-                    @Override
-                    public Object execute(Realm realm) throws Throwable {
-                        realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
-                                .put("queryId", searchIssueQuery.getId())
-                                .put("syncState", SyncState.NOT_SYNCED)
-                                .put("query", new JSONObject()
-                                        .put("id", searchIssueQuery.getId()))
-                        );
-                        return null;
-                    }
-                }).subscribe();
+                fetchLatestResults();
             }
         });
+        if (savedInstanceState == null) {
+            fetchLatestResults();
+        }
         searchProcedureObserver.sub();
     }
 
@@ -103,6 +97,26 @@ public class SearchResultFragment extends AbstractMainFragment {
     public void onDestroyView() {
         searchProcedureObserver.unsub();
         super.onDestroyView();
+    }
+
+    private void fetchLatestResults() {
+        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+            @Override
+            public Object execute(Realm realm) throws Throwable {
+                realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
+                        .put("queryId", searchIssueQuery.getId())
+                        .put("syncState", SyncState.NOT_SYNCED)
+                        .put("query", new JSONObject()
+                                .put("id", searchIssueQuery.getId()))
+                );
+                return null;
+            }
+        }).subscribe(new Action0() {
+            @Override
+            public void call() {
+                GitHubViewerService.keepAlive(getContext());
+            }
+        });
     }
 
     private void onRenderSearchProcedure(SearchIssueProcedure procedure) {
@@ -121,6 +135,6 @@ public class SearchResultFragment extends AbstractMainFragment {
             }
         }
 
-        issueListAdapter.updateIssueList(procedure.getResults());
+        issueListAdapter.updateIssueList(procedure.getItems());
     }
 }

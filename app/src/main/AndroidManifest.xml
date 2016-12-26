@@ -31,6 +31,8 @@
                     android:pathPrefix="@string/github_oauth_callback_path" />
             </intent-filter>
         </activity-alias>
+
+        <service android:name=".service.GitHubViewerService"/>
     </application>
 
 </manifest>

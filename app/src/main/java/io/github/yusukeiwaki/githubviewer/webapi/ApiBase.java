@@ -14,6 +14,7 @@ import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
 import io.github.yusukeiwaki.githubviewer.OkHttpHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -56,7 +57,7 @@ public class ApiBase {
         return task.getTask();
     }
 
-    protected final Task<JSONObject> jsonGET(String url) {
+    protected final Task<JSONObject> jsonGET(HttpUrl url) {
         String token = CurrentUserData.get(context).getString(CurrentUserData.KEY_TOKEN, null);
         if (TextUtils.isEmpty(token)) {
             return Task.forError(new Unauthorized());

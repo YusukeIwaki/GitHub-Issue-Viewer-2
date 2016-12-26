@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.R;
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.Request;
 
 /**
@@ -39,6 +40,16 @@ public class GitHubAPI extends ApiBase {
     }
 
     public Task<JSONObject> getCurrentUser() {
-        return jsonGET("https://api.github.com/user");
+        return jsonGET(HttpUrl.parse("https://api.github.com/user"));
+    }
+
+    public Task<JSONObject> searchIssues(String queryText, String sort, String order, int page) {
+        return jsonGET(
+                HttpUrl.parse("https://api.github.com/search/issues").newBuilder()
+                        .addQueryParameter("q", queryText)
+                        .addQueryParameter("sort", sort)
+                        .addQueryParameter("order", order)
+                        .addQueryParameter("page", Integer.toString(page))
+                        .build());
     }
 }
