@@ -3,14 +3,13 @@ package io.github.yusukeiwaki.githubviewer.main;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import icepick.State;
 import io.github.yusukeiwaki.githubviewer.AbstractAuthStateObservingActivity;
 import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
 import io.github.yusukeiwaki.githubviewer.model.User;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers.RealmHelper;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
@@ -44,7 +43,7 @@ abstract class AbstractCurrentUserActivity extends AbstractAuthStateObservingAct
             if (currentUserId != -1) {
                 User user = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
                     @Override
-                    public User execute(Realm realm) throws Throwable {
+                    public User execute(Realm realm) throws Exception {
                         return realm.where(User.class).equalTo("id", currentUserId).findFirst();
                     }
                 });
@@ -60,7 +59,7 @@ abstract class AbstractCurrentUserActivity extends AbstractAuthStateObservingAct
             }
             User user = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
                 @Override
-                public User execute(Realm realm) throws Throwable {
+                public User execute(Realm realm) throws Exception {
                     return realm.where(User.class).equalTo("id", currentUserId).findFirst();
                 }
             });

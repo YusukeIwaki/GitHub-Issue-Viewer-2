@@ -5,14 +5,15 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
+import bolts.Continuation;
+import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.cache.Cache;
 import io.github.yusukeiwaki.githubviewer.model.User;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer.renderer.UserRenderer;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers.RealmHelper;
-import rx.functions.Action0;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
@@ -49,18 +50,19 @@ public class HomeFragment extends AbstractCurrentUserFragment {
 
     private void addQueryInvolvesMe(final String username) {
         final long queryId = System.currentTimeMillis();
-        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
-            public Object execute(Realm realm) throws Throwable {
+            public Object execute(Realm realm) throws Exception {
                 SearchIssueQuery.insertRecord(realm, queryId, "me", "involves:" + username);
                 return null;
             }
-        }).subscribe(new Action0() {
+        }).onSuccess(new Continuation<Void, Object>() {
             @Override
-            public void call() {
+            public Object then(Task<Void> task) throws Exception {
                 Cache.get(getContext()).edit()
                         .putLong(Cache.KEY_QUERY_ITEM_ID, queryId)
                         .apply();
+                return null;
             }
         });
     }

@@ -8,6 +8,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 
 import org.json.JSONObject;
 
+import bolts.Continuation;
+import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.model.SyncState;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
@@ -15,9 +17,8 @@ import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer.service.GitHubViewerService;
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import jp.co.crowdworks.realm_java_helpers.RealmHelper;
-import jp.co.crowdworks.realm_java_helpers.RealmObjectObserver;
-import rx.functions.Action0;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmObjectObserver;
 
 /**
  */
@@ -45,7 +46,7 @@ public class SearchResultFragment extends AbstractMainFragment {
         final long queryId = args.getLong("queryItemId");
         searchIssueQuery = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<SearchIssueQuery>() {
             @Override
-            public SearchIssueQuery execute(Realm realm) throws Throwable {
+            public SearchIssueQuery execute(Realm realm) throws Exception {
                 return realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
             }
         });
@@ -100,9 +101,9 @@ public class SearchResultFragment extends AbstractMainFragment {
     }
 
     private void fetchLatestResults() {
-        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
-            public Object execute(Realm realm) throws Throwable {
+            public Object execute(Realm realm) throws Exception {
                 realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
                         .put("queryId", searchIssueQuery.getId())
                         .put("syncState", SyncState.NOT_SYNCED)
@@ -111,10 +112,11 @@ public class SearchResultFragment extends AbstractMainFragment {
                 );
                 return null;
             }
-        }).subscribe(new Action0() {
+        }).onSuccess(new Continuation<Void, Object>() {
             @Override
-            public void call() {
+            public Object then(Task<Void> task) throws Exception {
                 GitHubViewerService.keepAlive(getContext());
+                return null;
             }
         });
     }

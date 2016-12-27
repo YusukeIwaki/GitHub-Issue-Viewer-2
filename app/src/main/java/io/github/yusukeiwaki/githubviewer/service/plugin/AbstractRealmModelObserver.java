@@ -11,7 +11,7 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import jp.co.crowdworks.realm_java_helpers.RealmListObserver;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmListObserver;
 
 /**
  */

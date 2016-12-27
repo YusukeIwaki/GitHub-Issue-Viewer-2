@@ -7,12 +7,13 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.TextView;
 
+import bolts.Continuation;
+import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.cache.Cache;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers.RealmHelper;
-import rx.functions.Action0;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
@@ -39,7 +40,7 @@ public class EditQueryDialogFragment extends DialogFragment {
             final long id = args.getLong("id");
             originalQuery = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<SearchIssueQuery>() {
                 @Override
-                public SearchIssueQuery execute(Realm realm) throws Throwable {
+                public SearchIssueQuery execute(Realm realm) throws Exception {
                     return realm.where(SearchIssueQuery.class).equalTo("id", id).findFirst();
                 }
             });
@@ -75,15 +76,15 @@ public class EditQueryDialogFragment extends DialogFragment {
     private void insertQueryRecord(final String title, final String queryText) {
         final long id = originalQuery != null ? originalQuery.getId() : -1;
         final long queryId = (id == -1) ? System.currentTimeMillis() : id;
-        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
-            public Object execute(Realm realm) throws Throwable {
+            public Object execute(Realm realm) throws Exception {
                 SearchIssueQuery.insertRecord(realm, queryId, title, queryText);
                 return null;
             }
-        }).subscribe(new Action0() {
+        }).onSuccess(new Continuation<Void, Object>() {
             @Override
-            public void call() {
+            public Object then(Task<Void> task) throws Exception {
                 dismiss();
 
                 if (id == -1) {
@@ -91,6 +92,7 @@ public class EditQueryDialogFragment extends DialogFragment {
                             .putLong(Cache.KEY_QUERY_ITEM_ID, queryId)
                             .apply();
                 }
+                return null;
             }
         });
     }

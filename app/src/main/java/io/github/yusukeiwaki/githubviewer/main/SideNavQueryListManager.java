@@ -11,7 +11,7 @@ import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer.widget.SideMenuQueryItemView;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import jp.co.crowdworks.realm_java_helpers.RealmListObserver;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmListObserver;
 
 /**
  */

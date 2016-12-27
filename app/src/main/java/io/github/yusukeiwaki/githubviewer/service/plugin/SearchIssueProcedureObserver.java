@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import bolts.Continuation;
 import bolts.Task;
+import io.github.yusukeiwaki.githubviewer.LogcatIfError;
 import io.github.yusukeiwaki.githubviewer.model.Issue;
 import io.github.yusukeiwaki.githubviewer.model.SyncState;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
@@ -17,9 +18,7 @@ import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import jp.co.crowdworks.realm_java_helpers.RealmHelper;
-import rx.Completable;
-import rx.CompletableSubscriber;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
@@ -30,16 +29,16 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
     }
 
     private void restartPendingProcedures() {
-        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
-            public Object execute(Realm realm) throws Throwable {
+            public Object execute(Realm realm) throws Exception {
                 RealmResults<SearchIssueProcedure> results = realm.where(SearchIssueProcedure.class).equalTo("syncState", SyncState.SYNCING).findAll();
                 for (SearchIssueProcedure procedure : results) {
                     procedure.setSyncState(SyncState.NOT_SYNCED);
                 }
                 return null;
             }
-        }).subscribe();
+        }).continueWith(new LogcatIfError());
     }
 
     @Override
@@ -65,50 +64,33 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
         }
 
         @Override
-        protected Completable handleItem(final long primaryKey) {
-            return Completable.create(new Completable.OnSubscribe() {
-                @Override
-                public void call(final CompletableSubscriber completableSubscriber) {
-                    gitHubAPI.searchIssues(queryText, sort, order, page)
-                            .onSuccess(new Continuation<JSONObject, Object>() {
+        protected Task<Void> handleItem(final long primaryKey) {
+            return gitHubAPI.searchIssues(queryText, sort, order, page)
+                    .onSuccessTask(new Continuation<JSONObject, Task<Void>>() {
+                        @Override
+                        public Task<Void> then(Task<JSONObject> task) throws Exception {
+                            final JSONObject resultJson = task.getResult();
+                            return RealmHelper.executeTransaction(new RealmHelper.Transaction() {
                                 @Override
-                                public Object then(Task<JSONObject> task) throws Exception {
-                                    final JSONObject resultJson = task.getResult();
-                                    RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
-                                        @Override
-                                        public Object execute(Realm realm) throws Throwable {
-                                            resultJson.put("queryId", primaryKey);
-                                            if (!shouldResetResult) {
-                                                JSONArray itemsJson = resultJson.getJSONArray("items");
+                                public Object execute(Realm realm) throws Exception {
+                                    resultJson.put("queryId", primaryKey);
+                                    if (!shouldResetResult) {
+                                        JSONArray itemsJson = resultJson.getJSONArray("items");
 
-                                                SearchIssueProcedure procedure = realm.where(SearchIssueProcedure.class).equalTo("queryId", primaryKey).findFirst();
-                                                int i = 0;
-                                                for(Issue issue : procedure.getItems()) {
-                                                    itemsJson.put(i, new JSONObject().put("id", issue.getId()));
-                                                    i++;
-                                                }
-                                            }
-                                            realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, resultJson);
-
-                                            return null;
+                                        SearchIssueProcedure procedure = realm.where(SearchIssueProcedure.class).equalTo("queryId", primaryKey).findFirst();
+                                        int i = 0;
+                                        for(Issue issue : procedure.getItems()) {
+                                            itemsJson.put(i, new JSONObject().put("id", issue.getId()));
+                                            i++;
                                         }
-                                    }).subscribe();
-                                    return null;
-                                }
-                            })
-                            .continueWith(new Continuation<Object, Object>() {
-                                @Override
-                                public Object then(Task<Object> task) throws Exception {
-                                    if (task.isFaulted()) {
-                                        completableSubscriber.onError(task.getError());
-                                    } else {
-                                        completableSubscriber.onCompleted();
                                     }
+                                    realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, resultJson);
+
                                     return null;
                                 }
                             });
-                }
-            });
+                        }
+                    });
         }
 
         @Override

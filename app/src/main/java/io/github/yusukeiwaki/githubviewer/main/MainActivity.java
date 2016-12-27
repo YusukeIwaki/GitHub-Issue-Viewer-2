@@ -27,8 +27,7 @@ import io.github.yusukeiwaki.githubviewer.model.User;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers.RealmHelper;
-import rx.functions.Action0;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 public class MainActivity extends AbstractCurrentUserActivity {
 
@@ -97,7 +96,7 @@ public class MainActivity extends AbstractCurrentUserActivity {
             // re-render Side menu avatar.
             User currentUser = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
                 @Override
-                public User execute(Realm realm) throws Throwable {
+                public User execute(Realm realm) throws Exception {
                     return User.queryUserById(realm, currentUserId).findFirst();
                 }
             });
@@ -110,7 +109,7 @@ public class MainActivity extends AbstractCurrentUserActivity {
         if (itemId != -1) {
             SearchIssueQuery query = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<SearchIssueQuery>() {
                 @Override
-                public SearchIssueQuery execute(Realm realm) throws Throwable {
+                public SearchIssueQuery execute(Realm realm) throws Exception {
                     return realm.where(SearchIssueQuery.class).equalTo("id", itemId).findFirst();
                 }
             });
@@ -167,18 +166,19 @@ public class MainActivity extends AbstractCurrentUserActivity {
                     public Object then(Task<JSONObject> task) throws Exception {
                         final JSONObject userJson = task.getResult();
                         final long userId = userJson.getLong("id");
-                        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+                        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
                             @Override
-                            public Object execute(Realm realm) throws Throwable {
+                            public Object execute(Realm realm) throws Exception {
                                 realm.createOrUpdateObjectFromJson(User.class, userJson);
                                 return null;
                             }
-                        }).subscribe(new Action0() {
+                        }).onSuccess(new Continuation<Void, Object>() {
                             @Override
-                            public void call() {
+                            public Object then(Task<Void> task) throws Exception {
                                 CurrentUserData.get(MainActivity.this).edit()
                                         .putLong(CurrentUserData.KEY_USER_ID, userId)
                                         .apply();
+                                return null;
                             }
                         });
                         return null;
@@ -207,14 +207,14 @@ public class MainActivity extends AbstractCurrentUserActivity {
     }
 
     private void deleteQuery(final long id) {
-        RealmHelper.rxExecuteTransaction(new RealmHelper.Transaction() {
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
-            public Object execute(Realm realm) throws Throwable {
+            public Object execute(Realm realm) throws Exception {
                 return realm.where(SearchIssueQuery.class).equalTo("id", id).findAll().deleteAllFromRealm();
             }
-        }).subscribe(new Action0() {
+        }).onSuccess(new Continuation<Void, Object>() {
             @Override
-            public void call() {
+            public Object then(Task<Void> task) throws Exception {
                 SharedPreferences prefs = Cache.get(MainActivity.this);
                 if (prefs.getLong(Cache.KEY_QUERY_ITEM_ID, -1) == id) {
                     prefs.edit()
@@ -222,6 +222,8 @@ public class MainActivity extends AbstractCurrentUserActivity {
                             .apply();
                 }
                 closeDrawerIfNeeded();
+
+                return null;
             }
         });
     }
