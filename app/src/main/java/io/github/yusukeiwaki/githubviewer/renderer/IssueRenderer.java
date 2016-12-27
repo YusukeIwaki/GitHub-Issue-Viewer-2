@@ -93,7 +93,7 @@ public class IssueRenderer extends AbstractRenderer<Issue> {
         if (!shouldHandle(cardView)) return this;
 
         if ("closed".equals(object.getState())) {
-            cardView.setCardBackgroundColor(0xffE8E8E8);
+            cardView.setCardBackgroundColor(0xffC6C6C6);
         } else {
             cardView.setCardBackgroundColor(0xffE7F6DF);
         }

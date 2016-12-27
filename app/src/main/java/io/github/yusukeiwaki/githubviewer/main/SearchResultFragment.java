@@ -78,7 +78,7 @@ public class SearchResultFragment extends AbstractMainFragment {
         issueListAdapter = new IssueListAdapter();
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(getResources().getInteger(R.integer.recyclerview_column_count), StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(issueListAdapter);
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
