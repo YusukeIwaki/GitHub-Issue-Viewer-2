@@ -59,8 +59,8 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
             queryText = query.getQ();
             sort = query.getSort();
             order = query.getOrder();
-            page = query.getPage();
-            shouldResetResult = page <=1;
+            shouldResetResult = item.isReset();
+            page = shouldResetResult ? 1 : query.getPage();
         }
 
         @Override
@@ -74,14 +74,15 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
                                 @Override
                                 public Object execute(Realm realm) throws Exception {
                                     resultJson.put("queryId", primaryKey);
+                                    resultJson.put("query", new JSONObject()
+                                            .put("id", primaryKey)
+                                            .put("page", page + 1));
                                     if (!shouldResetResult) {
                                         JSONArray itemsJson = resultJson.getJSONArray("items");
 
                                         SearchIssueProcedure procedure = realm.where(SearchIssueProcedure.class).equalTo("queryId", primaryKey).findFirst();
-                                        int i = 0;
                                         for(Issue issue : procedure.getItems()) {
-                                            itemsJson.put(i, new JSONObject().put("id", issue.getId()));
-                                            i++;
+                                            itemsJson.put(new JSONObject().put("id", issue.getId()));
                                         }
                                     }
                                     realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, resultJson);

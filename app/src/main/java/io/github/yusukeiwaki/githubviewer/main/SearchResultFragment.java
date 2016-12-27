@@ -3,6 +3,7 @@ package io.github.yusukeiwaki.githubviewer.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
@@ -27,7 +28,9 @@ public class SearchResultFragment extends AbstractMainFragment {
 
     private SearchIssueQuery searchIssueQuery;
     private RealmObjectObserver<SearchIssueProcedure> searchProcedureObserver;
+    private RecyclerView recyclerView;
     private IssueListAdapter issueListAdapter;
+    private LoadMoreScrollListener loadMoreScrollListener;
 
     public static SearchResultFragment create(long queryItemId) {
         Bundle args = new Bundle();
@@ -77,9 +80,18 @@ public class SearchResultFragment extends AbstractMainFragment {
     protected void onCreateView(@Nullable Bundle savedInstanceState) {
         issueListAdapter = new IssueListAdapter();
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(getResources().getInteger(R.integer.recyclerview_column_count), StaggeredGridLayoutManager.VERTICAL));
+        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(getResources().getInteger(R.integer.recyclerview_column_count), StaggeredGridLayoutManager.VERTICAL);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(issueListAdapter);
+
+        loadMoreScrollListener = new LoadMoreScrollListener(layoutManager, 15, LoadMoreScrollListener.DIRECTION_DOWN) {
+            @Override
+            public void requestMoreItem() {
+                fetchMoreResults();
+            }
+        };
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -107,8 +119,29 @@ public class SearchResultFragment extends AbstractMainFragment {
                 realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
                         .put("queryId", searchIssueQuery.getId())
                         .put("syncState", SyncState.NOT_SYNCED)
+                        .put("reset", true)
                         .put("query", new JSONObject()
                                 .put("id", searchIssueQuery.getId()))
+                );
+                return null;
+            }
+        }).onSuccess(new Continuation<Void, Object>() {
+            @Override
+            public Object then(Task<Void> task) throws Exception {
+                GitHubViewerService.keepAlive(getContext());
+                return null;
+            }
+        });
+    }
+
+    private void fetchMoreResults() {
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
+            @Override
+            public Object execute(Realm realm) throws Exception {
+                realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
+                        .put("queryId", searchIssueQuery.getId())
+                        .put("syncState", SyncState.NOT_SYNCED)
+                        .put("reset", false)
                 );
                 return null;
             }
@@ -134,6 +167,13 @@ public class SearchResultFragment extends AbstractMainFragment {
         } else {
             if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
+            }
+            if (loadMoreScrollListener != null) {
+                loadMoreScrollListener.setLoadingDone();
+                if (syncState == SyncState.SYNCED) {
+                    recyclerView.removeOnScrollListener(loadMoreScrollListener);
+                    if (procedure.getItems().size() < procedure.getTotal_count()) recyclerView.addOnScrollListener(loadMoreScrollListener);
+                }
             }
         }
 

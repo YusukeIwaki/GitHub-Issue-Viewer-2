@@ -10,6 +10,7 @@ import io.realm.annotations.PrimaryKey;
 public class SearchIssueProcedure extends RealmObject {
     @PrimaryKey private long queryId;
     private int syncState;
+    private boolean reset;
     private SearchIssueQuery query;
     private long total_count;
     private RealmList<Issue> items;
@@ -28,6 +29,14 @@ public class SearchIssueProcedure extends RealmObject {
 
     public void setSyncState(int syncState) {
         this.syncState = syncState;
+    }
+
+    public boolean isReset() {
+        return reset;
+    }
+
+    public void setReset(boolean reset) {
+        this.reset = reset;
     }
 
     public SearchIssueQuery getQuery() {
