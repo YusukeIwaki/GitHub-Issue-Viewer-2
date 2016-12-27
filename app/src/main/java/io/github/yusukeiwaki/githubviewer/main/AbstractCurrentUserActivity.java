@@ -40,7 +40,6 @@ abstract class AbstractCurrentUserActivity extends AbstractAuthStateObservingAct
 
     private boolean updateCurrentUserIdFromCacheIfNeeded(SharedPreferences prefs) {
         final long currentUserId = prefs.getLong(CurrentUserData.KEY_USER_ID, -1);
-        Log.d("hoge", "updateCurrentUserIdFromCacheIfNeeded currentUserId:" + this.currentUserId + "->" + currentUserId);
         if (this.currentUserId == -1) {
             if (currentUserId != -1) {
                 User user = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<User>() {
@@ -49,7 +48,6 @@ abstract class AbstractCurrentUserActivity extends AbstractAuthStateObservingAct
                         return realm.where(User.class).equalTo("id", currentUserId).findFirst();
                     }
                 });
-                Log.d("hoge", "updateCurrentUserIdFromCacheIfNeeded user" + user);
                 if (user != null) {
                     updateCurrentUserWith(user);
                     return true;
@@ -66,7 +64,6 @@ abstract class AbstractCurrentUserActivity extends AbstractAuthStateObservingAct
                     return realm.where(User.class).equalTo("id", currentUserId).findFirst();
                 }
             });
-            Log.d("hoge", "updateCurrentUserIdFromCacheIfNeeded user" + user);
             if (user == null) {
                 updateCurrentUserWith(null);
                 return true;
