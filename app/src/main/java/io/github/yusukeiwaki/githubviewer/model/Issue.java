@@ -11,7 +11,10 @@ import io.realm.annotations.PrimaryKey;
 public class Issue extends RealmObject {
     @PrimaryKey private long id;
     private String html_url;
+    private String repository_url;
     private String title;
+    private long number;
+    private RealmList<Label> labels;
     private User user;
     private String state;
     private User assignee;
@@ -20,6 +23,7 @@ public class Issue extends RealmObject {
     private Date created_at;
     private Date updated_at;
     private Date closed_at;
+    private String pull_request;//JSON
 
     public long getId() {
         return id;
@@ -37,12 +41,36 @@ public class Issue extends RealmObject {
         this.html_url = html_url;
     }
 
+    public String getRepository_url() {
+        return repository_url;
+    }
+
+    public void setRepository_url(String repository_url) {
+        this.repository_url = repository_url;
+    }
+
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public long getNumber() {
+        return number;
+    }
+
+    public void setNumber(long number) {
+        this.number = number;
+    }
+
+    public RealmList<Label> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(RealmList<Label> labels) {
+        this.labels = labels;
     }
 
     public User getUser() {
@@ -107,5 +135,13 @@ public class Issue extends RealmObject {
 
     public void setClosed_at(Date closed_at) {
         this.closed_at = closed_at;
+    }
+
+    public String getPull_request() {
+        return pull_request;
+    }
+
+    public void setPull_request(String pull_request) {
+        this.pull_request = pull_request;
     }
 }

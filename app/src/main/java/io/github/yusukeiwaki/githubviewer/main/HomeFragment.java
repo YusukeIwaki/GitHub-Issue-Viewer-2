@@ -53,7 +53,7 @@ public class HomeFragment extends AbstractCurrentUserFragment {
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Exception {
-                SearchIssueQuery.insertRecord(realm, queryId, "me", "involves:" + username);
+                SearchIssueQuery.insertRecord(realm, queryId, "Me", "involves:" + username);
                 return null;
             }
         }).onSuccess(new Continuation<Void, Object>() {

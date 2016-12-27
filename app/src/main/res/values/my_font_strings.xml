@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_font_compare">a</string>
+    <string name="my_font_issue">f</string>
+    <string name="my_font_pull_request">c</string>
+    <string name="my_font_fork">d</string>
+    <string name="my_font_merge">b</string>
+    <string name="my_font_commit">c</string>
+    <string name="my_font_comment">g</string>
+</resources>

@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.github.yusukeiwaki.githubviewer.R;
@@ -19,6 +21,12 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
     public void updateIssueList(List<Issue> newIssueList) {
         issueList.clear();
         issueList.addAll(newIssueList);
+        Collections.sort(issueList, new Comparator<Issue>() {
+            @Override
+            public int compare(Issue issue1, Issue issue2) {
+                return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
+            }
+        });
         notifyDataSetChanged();
     }
 

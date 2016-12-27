@@ -1,6 +1,5 @@
 package io.github.yusukeiwaki.githubviewer.login;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,8 +7,9 @@ import android.view.View;
 
 import java.util.UUID;
 
-import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
+import io.github.yusukeiwaki.githubviewer.LaunchUtil;
 import io.github.yusukeiwaki.githubviewer.R;
+import io.github.yusukeiwaki.githubviewer.cache.CurrentUserData;
 
 /**
  */
@@ -52,8 +52,6 @@ public class GitHubLoginFragment extends AbstractLoginFragment {
                 .appendQueryParameter("allow_signup", "false")
                 .build();
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        LaunchUtil.launchBrowser(getContext(), uri);
     }
 }
