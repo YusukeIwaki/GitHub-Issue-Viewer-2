@@ -85,7 +85,9 @@ public class MainActivity extends AbstractCurrentUserActivity {
             }
         });
 
-        currentQueryItemId = showFragmentForCurrentQueryItemId(Cache.get(this));
+        if (savedInstanceState == null) {
+            currentQueryItemId = showFragmentForCurrentQueryItemId(Cache.get(this));
+        }
     }
 
     @Override
