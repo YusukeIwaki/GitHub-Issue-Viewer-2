@@ -33,6 +33,7 @@
         </activity-alias>
 
         <service android:name=".service.GitHubViewerService"/>
+        <service android:name=".service.BackgroundFetchService"/>
     </application>
 
 </manifest>
