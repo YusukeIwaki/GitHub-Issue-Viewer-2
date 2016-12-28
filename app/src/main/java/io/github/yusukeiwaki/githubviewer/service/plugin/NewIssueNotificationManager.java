@@ -22,16 +22,13 @@ import bolts.Continuation;
 import bolts.Task;
 import bolts.TaskCompletionSource;
 import io.github.yusukeiwaki.githubviewer.R;
-import io.github.yusukeiwaki.githubviewer.cache.Cache;
 import io.github.yusukeiwaki.githubviewer.main.MainActivity;
 import io.github.yusukeiwaki.githubviewer.model.Issue;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
-import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
-import io.github.yusukeiwaki.githubviewer.service.NotificationDismissalCallbackService;
+import io.github.yusukeiwaki.githubviewer.background_fetch.NotificationDismissalCallbackService;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */

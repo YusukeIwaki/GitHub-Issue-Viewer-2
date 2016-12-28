@@ -33,8 +33,8 @@
         </activity-alias>
 
         <service android:name=".service.GitHubViewerService"/>
-        <service android:name=".service.BackgroundFetchService"/>
-        <service android:name=".service.NotificationDismissalCallbackService"/>
+        <service android:name=".background_fetch.BackgroundFetchService"/>
+        <service android:name=".background_fetch.NotificationDismissalCallbackService"/>
     </application>
 
 </manifest>

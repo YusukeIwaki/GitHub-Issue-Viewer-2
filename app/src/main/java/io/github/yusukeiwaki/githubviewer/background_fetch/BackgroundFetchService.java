@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer.service;
+package io.github.yusukeiwaki.githubviewer.background_fetch;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.model.SyncState;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
+import io.github.yusukeiwaki.githubviewer.service.GitHubViewerService;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;

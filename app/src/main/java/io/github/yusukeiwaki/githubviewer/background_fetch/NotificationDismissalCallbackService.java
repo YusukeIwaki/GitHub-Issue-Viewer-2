@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer.service;
+package io.github.yusukeiwaki.githubviewer.background_fetch;
 
 import android.app.IntentService;
 import android.content.Intent;
