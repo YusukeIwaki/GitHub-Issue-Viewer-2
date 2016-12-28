@@ -1,6 +1,7 @@
 package io.github.yusukeiwaki.githubviewer.main;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -86,6 +87,23 @@ public class MainActivity extends AbstractCurrentUserActivity {
         });
 
         if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            if (intent != null) {
+                final long queryId = intent.getLongExtra("queryId", -1);
+                if (queryId != -1) {
+                    SearchIssueQuery query = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<SearchIssueQuery>() {
+                        @Override
+                        public SearchIssueQuery execute(Realm realm) throws Exception {
+                            return realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
+                        }
+                    });
+                    if (query != null) {
+                        Cache.get(this).edit()
+                                .putLong(Cache.KEY_QUERY_ITEM_ID, queryId)
+                                .commit();
+                    }
+                }
+            }
             currentQueryItemId = showFragmentForCurrentQueryItemId(Cache.get(this));
         }
     }

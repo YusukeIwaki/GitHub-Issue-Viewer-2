@@ -9,6 +9,8 @@ import io.realm.annotations.PrimaryKey;
 /**
  */
 public class Issue extends RealmObject {
+    private final static String REPO_URL_PREFIX = "https://api.github.com/repos/";
+
     @PrimaryKey private long id;
     private String html_url;
     private String repository_url;
@@ -43,6 +45,10 @@ public class Issue extends RealmObject {
 
     public String getRepository_url() {
         return repository_url;
+    }
+
+    public String getRepositoryName() {
+        return getRepository_url().substring(REPO_URL_PREFIX.length());
     }
 
     public void setRepository_url(String repository_url) {

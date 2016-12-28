@@ -1,7 +1,9 @@
 package io.github.yusukeiwaki.githubviewer.service.plugin;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -20,11 +22,16 @@ import bolts.Continuation;
 import bolts.Task;
 import bolts.TaskCompletionSource;
 import io.github.yusukeiwaki.githubviewer.R;
+import io.github.yusukeiwaki.githubviewer.cache.Cache;
+import io.github.yusukeiwaki.githubviewer.main.MainActivity;
 import io.github.yusukeiwaki.githubviewer.model.Issue;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
+import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueQuery;
+import io.github.yusukeiwaki.githubviewer.service.NotificationDismissalCallbackService;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
@@ -84,12 +91,13 @@ public class NewIssueNotificationManager extends AbstractRealmModelObserver<Sear
 
                         int numUnread = 0;
                         final long lastSeen = procedure.getQuery().getLastSeenAt();
+                        final long queryId = procedure.getQueryId();
                         StringBuilder sb = new StringBuilder();
                         sb.append(context.getResources().getString(R.string.notification_title_unread_issue));
                         for (Issue issue : procedure.getItems())  {
                             if (issue.getUpdated_at().getTime() > lastSeen) {
                                 numUnread++;
-                                sb.append("\n> ").append(issue.getTitle());
+                                sb.append("\n").append(String.format("[%s#%d] ", issue.getRepositoryName(), issue.getNumber())).append(issue.getTitle());
                             }
                         }
 
@@ -98,7 +106,9 @@ public class NewIssueNotificationManager extends AbstractRealmModelObserver<Sear
                                 .setContentText(sb.toString())
                                 .setNumber(numUnread)
                                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                                .setSmallIcon(R.drawable.ic_notification);
+                                .setSmallIcon(R.drawable.ic_notification)
+                                .setContentIntent(getContentIntent(queryId))
+                                .setDeleteIntent(getDeleteIntent(queryId));
 
                         if (!task.isFaulted()) {
                             builder.setLargeIcon(task.getResult());
@@ -161,5 +171,23 @@ public class NewIssueNotificationManager extends AbstractRealmModelObserver<Sear
                     }
                 });
         return task.getTask();
+    }
+
+    private PendingIntent getContentIntent(final long queryId) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("queryId", queryId);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        return PendingIntent.getActivity(context.getApplicationContext(),
+                (int) (System.currentTimeMillis() % Integer.MAX_VALUE),
+                intent, PendingIntent.FLAG_ONE_SHOT);
+    }
+
+    private PendingIntent getDeleteIntent(final long queryId) {
+        Intent intent = new Intent(context, NotificationDismissalCallbackService.class);
+        intent.putExtra("queryId", queryId);
+        return PendingIntent.getService(context.getApplicationContext(),
+                (int) (System.currentTimeMillis() % Integer.MAX_VALUE),
+                intent, PendingIntent.FLAG_ONE_SHOT);
     }
 }

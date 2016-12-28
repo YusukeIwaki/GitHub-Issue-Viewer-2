@@ -13,8 +13,6 @@ import io.github.yusukeiwaki.githubviewer.model.Issue;
 /**
  */
 public class IssueRenderer extends AbstractRenderer<Issue> {
-    private final static String REPO_URL_PREFIX = "https://api.github.com/repos/";
-
     private final UserRenderer userRenderer;
     public IssueRenderer(Context context, Issue issue) {
         super(context, issue);
@@ -60,7 +58,7 @@ public class IssueRenderer extends AbstractRenderer<Issue> {
     public IssueRenderer repoTitleInto(TextView textView) {
         if (!shouldHandle(textView)) return this;
 
-        textView.setText(object.getRepository_url().substring(REPO_URL_PREFIX.length()));
+        textView.setText(object.getRepositoryName());
 
         return this;
     }
