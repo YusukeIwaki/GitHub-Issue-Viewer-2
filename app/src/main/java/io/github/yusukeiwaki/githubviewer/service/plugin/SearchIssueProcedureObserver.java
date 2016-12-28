@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer.LogcatIfError;
@@ -106,7 +108,8 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
     };
 
     @Override
-    protected void handleItem(@NonNull SearchIssueProcedure item) {
+    protected void handleItems(@NonNull List<SearchIssueProcedure> items) {
+        SearchIssueProcedure item = items.get(0);
         new MyTask(item).execute(item.getQueryId());
     }
 }

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import bolts.Continuation;
 import bolts.Task;
+import io.github.yusukeiwaki.githubviewer.LogcatIfError;
 import io.github.yusukeiwaki.githubviewer.R;
 import io.github.yusukeiwaki.githubviewer.model.SyncState;
 import io.github.yusukeiwaki.githubviewer.model.internal.SearchIssueProcedure;
@@ -104,6 +105,23 @@ public class SearchResultFragment extends AbstractMainFragment {
             fetchLatestResults();
         }
         searchProcedureObserver.sub();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        final long queryId = searchIssueQuery.getId();
+        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
+            @Override
+            public Object execute(Realm realm) throws Exception {
+                SearchIssueQuery query = realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
+                if (query != null) {
+                    query.setLastSeenAt(System.currentTimeMillis());
+                }
+                return null;
+            }
+        }).continueWith(new LogcatIfError());
     }
 
     @Override

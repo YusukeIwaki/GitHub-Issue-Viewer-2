@@ -28,7 +28,7 @@ abstract class AbstractRealmModelObserver<T extends RealmObject> extends RealmLi
 
     protected abstract RealmQuery<T> query(Realm realm);
 
-    protected abstract void handleItem(@NonNull T item);
+    protected abstract void handleItems(@NonNull List<T> items);
 
     @Override
     protected RealmResults<T> queryItems(Realm realm) {
@@ -39,7 +39,7 @@ abstract class AbstractRealmModelObserver<T extends RealmObject> extends RealmLi
     protected void onCollectionChanged(List<T> list) {
         if (list.isEmpty()) return;
 
-        handleItem(list.get(0));
+        handleItems(list);
     }
 
     @Override

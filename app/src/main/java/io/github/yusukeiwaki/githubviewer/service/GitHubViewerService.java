@@ -10,6 +10,7 @@ import android.util.Log;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import io.github.yusukeiwaki.githubviewer.service.plugin.NewIssueNotificationManager;
 import io.github.yusukeiwaki.githubviewer.service.plugin.SearchIssueProcedureObserver;
 import io.github.yusukeiwaki.githubviewer.webapi.GitHubAPI;
 
@@ -48,7 +49,8 @@ public class GitHubViewerService extends Service {
     }
 
     private static final Class[] PLUGINS = {
-            SearchIssueProcedureObserver.class
+            SearchIssueProcedureObserver.class,
+            NewIssueNotificationManager.class
     };
 
     private void loadPlugins() {
