@@ -40,6 +40,7 @@ public class BackgroundFetchJob extends Job {
     protected Result onRunJob(Params params) {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         final ResultRef<Boolean> resultRef = new ResultRef<>();
+        resultRef.result = false;
 
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
