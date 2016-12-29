@@ -31,9 +31,9 @@ public class IssueRenderer extends AbstractRenderer<Issue> {
         if (!shouldHandle(textView)) return this;
 
         if (TextUtils.isEmpty(object.getPull_request())) {
-            textView.setText(R.string.my_font_pull_request);
-        } else {
             textView.setText(R.string.my_font_issue);
+        } else {
+            textView.setText(R.string.my_font_pull_request);
         }
 
         return this;
