@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.yusukeiwaki.githubviewer">
+    package="io.github.yusukeiwaki.githubviewer2">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -11,17 +11,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
-        android:name=".GitHubViewerApplication">
-        <activity android:name=".main.MainActivity">
+        android:name="io.github.yusukeiwaki.githubviewer2.GitHubViewerApplication">
+        <activity android:name="io.github.yusukeiwaki.githubviewer2.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.LoginActivity"/>
+        <activity android:name="io.github.yusukeiwaki.githubviewer2.login.LoginActivity"/>
         <activity-alias
             android:name="GitHubCallbackActivity"
-            android:targetActivity=".login.LoginActivity">
+            android:targetActivity="io.github.yusukeiwaki.githubviewer2.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -32,9 +32,9 @@
             </intent-filter>
         </activity-alias>
 
-        <service android:name=".service.GitHubViewerService"/>
-        <service android:name=".background_fetch.BackgroundFetchService"/>
-        <service android:name=".background_fetch.NotificationDismissalCallbackService"/>
+        <service android:name="io.github.yusukeiwaki.githubviewer2.service.GitHubViewerService"/>
+        <service android:name="io.github.yusukeiwaki.githubviewer2.background_fetch.BackgroundFetchService"/>
+        <service android:name="io.github.yusukeiwaki.githubviewer2.background_fetch.NotificationDismissalCallbackService"/>
     </application>
 
 </manifest>
