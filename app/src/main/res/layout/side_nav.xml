@@ -26,7 +26,7 @@
             android:text="@string/caption_add_search_query"
             style="@style/Widget.AppCompat.Button.Borderless"/>
 
-        <io.github.yusukeiwaki.githubviewer.widget.DividerView
+        <io.github.yusukeiwaki.githubviewer2.widget.DividerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -37,7 +37,7 @@
             android:title="@string/settings"
             /-->
 
-        <io.github.yusukeiwaki.githubviewer.widget.SideMenuItemView
+        <io.github.yusukeiwaki.githubviewer2.widget.SideMenuItemView
             android:id="@+id/nav_item_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
