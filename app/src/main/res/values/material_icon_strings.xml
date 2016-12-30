@@ -4,5 +4,6 @@
     <string translatable="false" name="material_icon_trending_up">&#xf310;</string>
 
     <string translatable="false" name="material_icon_settings">&#xf1c6;</string>
+    <string translatable="false" name="material_icon_feedback">&#xf260;</string>
     <string translatable="false" name="material_icon_logout">&#xf1af;</string>
 </resources>

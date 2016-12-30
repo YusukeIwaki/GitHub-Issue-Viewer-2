@@ -1,12 +1,15 @@
 package io.github.yusukeiwaki.githubviewer2.main;
 
 import android.content.DialogInterface;
+import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import io.github.yusukeiwaki.githubviewer2.LaunchUtil;
 import io.github.yusukeiwaki.githubviewer2.R;
 import io.github.yusukeiwaki.githubviewer2.cache.CurrentUserData;
 import io.github.yusukeiwaki.githubviewer2.main.dialog.EditQueryDialogFragment;
@@ -36,6 +39,23 @@ public class SideNavManager {
             @Override
             public void onClick(View view) {
                 new EditQueryDialogFragment().show(activity.getSupportFragmentManager(), EditQueryDialogFragment.class.getSimpleName());
+            }
+        });
+        rootView.findViewById(R.id.nav_item_feedback).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StringBuilder body = new StringBuilder();
+                body.append("\n\n\n")
+                        .append("-----\n")
+                        .append("model: ").append(Build.MODEL).append("\n")
+                        .append("API: ").append(Build.VERSION.SDK_INT);
+
+
+                Uri uri = new Uri.Builder()
+                        .scheme("https").authority("github.com").path("/YusukeIwaki/GitHubViewer/issues/new")
+                        .appendQueryParameter("body", body.toString())
+                        .build();
+                LaunchUtil.launchBrowser(activity, uri);
             }
         });
         rootView.findViewById(R.id.nav_item_logout).setOnClickListener(new View.OnClickListener() {

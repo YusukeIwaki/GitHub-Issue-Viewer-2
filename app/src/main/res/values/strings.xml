@@ -18,6 +18,7 @@
     <string name="query">検索クエリ</string>
     <string name="retry">再試行</string>
     <string name="settings">設定</string>
+    <string name="feedback">ご意見・ご要望</string>
     <string name="logout">ログアウト</string>
 
     <string name="notification_title_unread_issue">未読のIssue/Pull Requestがあります。</string>
