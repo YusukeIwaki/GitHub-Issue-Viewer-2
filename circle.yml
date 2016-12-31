@@ -7,7 +7,7 @@ dependencies:
   pre:
     - echo "sdk.dir="$ANDROID_HOME > local.properties
     - echo $YUSUKE_IWAKI_JKS_BASE64 | base64 --decode > YusukeIwaki.jks
-    - echo GOOGLE_PLAY_JSON_BASE64 | base64 --decode > 74bd3cce8a48.json
+    - echo $GOOGLE_PLAY_JSON_BASE64 | base64 --decode > 74bd3cce8a48.json
     - mkdir -p app/src/release/res/values/
     - echo $RELEASE_GITHUB_AUTH_STRINGS_XML_BASE64 | base64 --decode > app/src/release/res/values/github_auth_strings.xml
 
