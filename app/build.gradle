@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "io.github.yusukeiwaki.githubviewer2"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 2
+        versionName "1.0.1"
+    }
+    signingConfigs {
+        release {
+            storeFile project.rootProject.file('YusukeIwaki.jks').getCanonicalFile()
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:cardview-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile project(':widgets')
+    compile 'jp.co.crowdworks:realm-java-helpers-bolts:0.1.1'
+    compile 'com.parse.bolts:bolts-tasks:1.4.0'
+
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.facebook.stetho:stetho:1.4.2'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+    compile 'com.uphyca:stetho_realm:2.0.0'
+
+    compile 'frankiesardo:icepick:3.2.0'
+    provided 'frankiesardo:icepick-processor:3.2.0'
+
+    compile 'com.evernote:android-job:1.1.3'
+}

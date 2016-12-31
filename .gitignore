@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+app/src/release/res
+YusukeIwaki.jks
+74bd3cce8a48.json
+.bundle
+vendor/bundle
+.ruby-version
