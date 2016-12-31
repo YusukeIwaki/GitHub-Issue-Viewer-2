@@ -1,0 +1,2 @@
+json_key_file "74bd3cce8a48.json" # Path to the json secret file - Follow https://github.com/fastlane/supply#setup to get one
+package_name "io.github.yusukeiwaki.githubviewer2" # e.g. com.krausefx.app
