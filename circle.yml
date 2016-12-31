@@ -7,10 +7,14 @@ dependencies:
   pre:
     - echo "sdk.dir="$ANDROID_HOME > local.properties
     - echo $YUSUKE_IWAKI_JKS_BASE64 | base64 --decode > YusukeIwaki.jks
+    - echo GOOGLE_PLAY_JSON_BASE64 | base64 --decode > 74bd3cce8a48.json
     - mkdir -p app/src/release/res/values/
     - echo $RELEASE_GITHUB_AUTH_STRINGS_XML_BASE64 | base64 --decode > app/src/release/res/values/github_auth_strings.xml
 
+ 
   override:
+    - sudo gem install bundler
+    - bundle install -j4 --path vendor/bundle
     - echo y | android update sdk --no-ui --all --filter tools
     - echo y | android update sdk --no-ui --all --filter android-25
     - echo y | android update sdk --no-ui --all --filter extra-android-m2repository,extra-android-support
@@ -21,8 +25,10 @@ dependencies:
   cache_directories:
     - /usr/local/android-sdk-linux/tools
     - /usr/local/android-sdk-linux/build-tools/25.0.2
+    - vendor/bundle
 
 test:
   override:
     - ./gradlew assembleRelease --stacktrace -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xms512m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false
     - find . -name app-release.apk -exec cp {} $CIRCLE_ARTIFACTS/ \;
+    - find . -name app-release.apk -exec bundle exec fastlane supply -b {} -a beta \;

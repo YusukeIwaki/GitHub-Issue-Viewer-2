@@ -1,0 +1,1 @@
+定期的にGitHubのIssue検索を実行して、新着のIssue/Pull Requestがあれば通知が出ます。
