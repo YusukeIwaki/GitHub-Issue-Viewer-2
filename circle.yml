@@ -31,4 +31,10 @@ test:
   override:
     - ./gradlew assembleRelease --stacktrace -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xms512m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false
     - find . -name app-release.apk -exec cp {} $CIRCLE_ARTIFACTS/ \;
-    - find . -name app-release.apk -exec bundle exec fastlane supply -b {} -a beta \;
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - find . -name app-release.apk -exec bundle exec fastlane supply -b {} -a beta \;
+      - ./circle.git-tag-push.sh `grep versionCode app/build.gradle | awk '{print $2}'`
