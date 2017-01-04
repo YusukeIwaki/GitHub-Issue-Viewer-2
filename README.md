@@ -1,5 +1,4 @@
-[![CircleCI](https://circleci.com/gh/YusukeIwaki/GitHubViewer.svg?style=svg)](https://circleci.com/gh/YusukeIwaki/GitHubViewer)
-
+[![CircleCI](https://circleci.com/gh/YusukeIwaki/GitHub-Issue-Viewer-2.svg?style=svg)](https://circleci.com/gh/YusukeIwaki/GitHub-Issue-Viewer-2)
 
 # GitHub-Issue-Viewer-2
 
