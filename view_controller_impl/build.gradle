@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath rootProject.ext.androidPlugin
+
+    // NOTE: Do not place your application dependencies here; they belong
+    // in the individual module build.gradle files
+  }
+}
+
+android {
+  compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.compileSdkVersion
+    versionCode 1
+    versionName "1"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
+
+dependencies {
+  compile rootProject.ext.dagger
+  annotationProcessor rootProject.ext.daggerCompiler
+
+  compile project(':view_controller')
+}

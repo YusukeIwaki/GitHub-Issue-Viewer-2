@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.yusukeiwaki.githubviewer2">
+
+  <application
+      android:name=".GitHubViewerApplication"
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:supportsRtl="true"
+      android:theme="@style/AppTheme">
+    <activity android:name=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity android:name=".login.LoginActivity"/>
+
+    <activity-alias
+        android:name="GitHubOAuthCallbackActivity"
+        android:targetActivity=".login.LoginActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+
+        <data
+            android:host="@string/github_oauth_callback_host"
+            android:pathPrefix="@string/github_oauth_callback_path"
+            android:scheme="@string/github_oauth_callback_scheme"/>
+      </intent-filter>
+    </activity-alias>
+  </application>
+
+</manifest>
