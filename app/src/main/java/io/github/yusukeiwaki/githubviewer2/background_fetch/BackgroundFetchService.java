@@ -7,12 +7,14 @@ import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
-import io.github.yusukeiwaki.githubviewer2.service.GitHubViewerService;
+import io.github.yusukeiwaki.githubviewer2.service.GitHubAPIService;
+import io.github.yusukeiwaki.githubviewer2.service2.GitHubViewerService;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
+ * just for debugging.
  */
 public class BackgroundFetchService extends IntentService {
     public BackgroundFetchService() {
@@ -21,6 +23,7 @@ public class BackgroundFetchService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        GitHubViewerService.keepAlive(getBaseContext());
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Exception {
@@ -33,7 +36,7 @@ public class BackgroundFetchService extends IntentService {
         }).onSuccess(new Continuation<Void, Object>() {
             @Override
             public Object then(Task<Void> task) throws Exception {
-                GitHubViewerService.keepAlive(getBaseContext());
+                GitHubAPIService.keepAlive(getBaseContext());
                 return null;
             }
         });

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
 
+import io.github.yusukeiwaki.githubviewer2.service2.GitHubViewerService;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +14,7 @@ import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
-import io.github.yusukeiwaki.githubviewer2.service.GitHubViewerService;
+import io.github.yusukeiwaki.githubviewer2.service.GitHubAPIService;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
@@ -42,6 +43,7 @@ public class BackgroundFetchJob extends Job {
         final ResultRef<Boolean> resultRef = new ResultRef<>();
         resultRef.result = false;
 
+        GitHubViewerService.keepAlive(getContext());
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Exception {
@@ -81,7 +83,7 @@ public class BackgroundFetchJob extends Job {
                     }
                 };
                 observer.sub();
-                GitHubViewerService.keepAlive(getContext());
+                GitHubAPIService.keepAlive(getContext());
                 return null;
             }
         });

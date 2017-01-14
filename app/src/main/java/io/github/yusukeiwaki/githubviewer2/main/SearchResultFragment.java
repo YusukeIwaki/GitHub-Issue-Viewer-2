@@ -16,7 +16,7 @@ import io.github.yusukeiwaki.githubviewer2.R;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
-import io.github.yusukeiwaki.githubviewer2.service.GitHubViewerService;
+import io.github.yusukeiwaki.githubviewer2.service.GitHubAPIService;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
@@ -146,7 +146,7 @@ public class SearchResultFragment extends AbstractMainFragment {
         }).onSuccess(new Continuation<Void, Object>() {
             @Override
             public Object then(Task<Void> task) throws Exception {
-                GitHubViewerService.keepAlive(getContext());
+                GitHubAPIService.keepAlive(getContext());
                 return null;
             }
         });
@@ -166,7 +166,7 @@ public class SearchResultFragment extends AbstractMainFragment {
         }).onSuccess(new Continuation<Void, Object>() {
             @Override
             public Object then(Task<Void> task) throws Exception {
-                GitHubViewerService.keepAlive(getContext());
+                GitHubAPIService.keepAlive(getContext());
                 return null;
             }
         });

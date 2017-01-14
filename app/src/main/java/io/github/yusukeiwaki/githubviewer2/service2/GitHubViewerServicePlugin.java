@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer2.service;
+package io.github.yusukeiwaki.githubviewer2.service2;
 
 /**
  */

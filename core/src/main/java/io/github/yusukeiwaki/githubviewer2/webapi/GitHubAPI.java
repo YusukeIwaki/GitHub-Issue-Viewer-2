@@ -6,7 +6,7 @@ import android.content.res.Resources;
 import org.json.JSONObject;
 
 import bolts.Task;
-import io.github.yusukeiwaki.githubviewer2.R;
+import io.github.yusukeiwaki.githubviewer2.core.R;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Request;

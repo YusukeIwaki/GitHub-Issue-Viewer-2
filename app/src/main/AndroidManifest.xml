@@ -32,8 +32,8 @@
             </intent-filter>
         </activity-alias>
 
-        <service android:name=".service.GitHubViewerService"/>
-        <service android:name=".background_fetch.BackgroundFetchService"/>
+        <service android:name=".service2.GitHubViewerService"/>
+        <service android:name=".background_fetch.BackgroundFetchService" android:exported="true"/>
         <service android:name=".background_fetch.NotificationDismissalCallbackService"/>
     </application>
 

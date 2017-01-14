@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import io.github.yusukeiwaki.githubviewer2.service.GitHubViewerServicePlugin;
+import io.github.yusukeiwaki.githubviewer2.service.GitHubAPIServicePlugin;
 import io.github.yusukeiwaki.githubviewer2.webapi.GitHubAPI;
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -15,7 +15,8 @@ import jp.co.crowdworks.realm_java_helpers_bolts.RealmListObserver;
 
 /**
  */
-abstract class AbstractRealmModelObserver<T extends RealmObject> extends RealmListObserver<T> implements GitHubViewerServicePlugin {
+abstract class AbstractRealmModelObserver<T extends RealmObject> extends RealmListObserver<T> implements
+    GitHubAPIServicePlugin {
 
     protected final Context context;
 

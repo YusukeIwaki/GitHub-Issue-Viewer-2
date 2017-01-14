@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer2.service;
+package io.github.yusukeiwaki.githubviewer2.service2;
 
 import android.app.Service;
 import android.content.Context;
@@ -6,13 +6,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
+import io.github.yusukeiwaki.githubviewer2.service2.plugin.NewIssueNotificationManager;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-
-import io.github.yusukeiwaki.githubviewer2.service.plugin.NewIssueNotificationManager;
-import io.github.yusukeiwaki.githubviewer2.service.plugin.SearchIssueProcedureObserver;
-import io.github.yusukeiwaki.githubviewer2.webapi.GitHubAPI;
 
 /**
  */
@@ -24,15 +20,12 @@ public class GitHubViewerService extends Service {
         context.startService(new Intent(context, GitHubViewerService.class));
     }
 
-    private GitHubAPI gitHubAPI;
-
     private final ArrayList<GitHubViewerServicePlugin> plugins = new ArrayList<>();
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        gitHubAPI = new GitHubAPI(getBaseContext());
         loadPlugins();
         registerPlugins();
     }
@@ -49,7 +42,6 @@ public class GitHubViewerService extends Service {
     }
 
     private static final Class[] PLUGINS = {
-            SearchIssueProcedureObserver.class,
             NewIssueNotificationManager.class
     };
 
@@ -57,8 +49,8 @@ public class GitHubViewerService extends Service {
         final Context context = getApplicationContext();
         for(Class clazz: PLUGINS){
             try {
-                Constructor ctor = clazz.getConstructor(Context.class, GitHubAPI.class);
-                Object obj = ctor.newInstance(context, gitHubAPI);
+                Constructor ctor = clazz.getConstructor(Context.class);
+                Object obj = ctor.newInstance(context);
 
                 if(obj instanceof GitHubViewerServicePlugin) {
                     GitHubViewerServicePlugin l = (GitHubViewerServicePlugin) obj;

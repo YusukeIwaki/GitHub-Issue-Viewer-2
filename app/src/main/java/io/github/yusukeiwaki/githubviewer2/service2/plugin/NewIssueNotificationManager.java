@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer2.service.plugin;
+package io.github.yusukeiwaki.githubviewer2.service2.plugin;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -12,39 +12,33 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
-
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import java.util.List;
-
 import bolts.Continuation;
 import bolts.Task;
 import bolts.TaskCompletionSource;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import io.github.yusukeiwaki.githubviewer2.R;
+import io.github.yusukeiwaki.githubviewer2.background_fetch.NotificationDismissalCallbackService;
 import io.github.yusukeiwaki.githubviewer2.main.MainActivity;
 import io.github.yusukeiwaki.githubviewer2.model.Issue;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
-import io.github.yusukeiwaki.githubviewer2.background_fetch.NotificationDismissalCallbackService;
-import io.github.yusukeiwaki.githubviewer2.webapi.GitHubAPI;
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import java.util.List;
 
 /**
  */
 public class NewIssueNotificationManager extends AbstractRealmModelObserver<SearchIssueProcedure> {
-    public NewIssueNotificationManager(Context context, GitHubAPI gitHubAPI) {
-        super(context, gitHubAPI);
+
+    public NewIssueNotificationManager(Context context) {
+        super(context);
     }
 
-    @Override
-    protected RealmQuery<SearchIssueProcedure> query(Realm realm) {
+    @Override protected RealmQuery<SearchIssueProcedure> query(Realm realm) {
         return realm.where(SearchIssueProcedure.class).isNotNull("query");
-
     }
 
-    @Override
-    protected void handleItems(@NonNull List<SearchIssueProcedure> items) {
+    @Override protected void handleItems(@NonNull List<SearchIssueProcedure> items) {
         for (final SearchIssueProcedure procedure : items) {
             final int notificationId = getNotificationIdFor(procedure);
             if (shouldNotify(procedure)) {
