@@ -6,20 +6,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-
-import org.json.JSONObject;
-
-import bolts.Continuation;
-import bolts.Task;
-import io.github.yusukeiwaki.githubviewer2.LogcatIfError;
 import io.github.yusukeiwaki.githubviewer2.R;
+import io.github.yusukeiwaki.githubviewer2.fecade.Fecade;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
-import io.github.yusukeiwaki.githubviewer2.service.GitHubAPIService;
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 import jp.co.crowdworks.realm_java_helpers_bolts.RealmObjectObserver;
 
 /**
@@ -48,12 +41,7 @@ public class SearchResultFragment extends AbstractMainFragment {
 
         Bundle args = getArguments();
         final long queryId = args.getLong("queryItemId");
-        searchIssueQuery = RealmHelper.executeTransactionForRead(new RealmHelper.Transaction<SearchIssueQuery>() {
-            @Override
-            public SearchIssueQuery execute(Realm realm) throws Exception {
-                return realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
-            }
-        });
+        searchIssueQuery = Fecade.forIssueList().getQueryById(queryId);
         searchProcedureObserver = new RealmObjectObserver<SearchIssueProcedure>() {
             @Override
             protected RealmQuery<SearchIssueProcedure> query(Realm realm) {
@@ -90,7 +78,7 @@ public class SearchResultFragment extends AbstractMainFragment {
         loadMoreScrollListener = new LoadMoreScrollListener(layoutManager, 15, LoadMoreScrollListener.DIRECTION_DOWN) {
             @Override
             public void requestMoreItem() {
-                fetchMoreResults();
+                Fecade.forIssueList().fetchMoreResults(getContext(), searchIssueQuery.getId());
             }
         };
 
@@ -98,11 +86,11 @@ public class SearchResultFragment extends AbstractMainFragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchLatestResults();
+                Fecade.forIssueList().fetchLatestResults(getContext(), searchIssueQuery.getId());
             }
         });
         if (savedInstanceState == null) {
-            fetchLatestResults();
+            Fecade.forIssueList().fetchLatestResults(getContext(), searchIssueQuery.getId());
         }
         searchProcedureObserver.sub();
     }
@@ -112,64 +100,13 @@ public class SearchResultFragment extends AbstractMainFragment {
         super.onStart();
 
         final long queryId = searchIssueQuery.getId();
-        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
-            @Override
-            public Object execute(Realm realm) throws Exception {
-                SearchIssueQuery query = realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
-                if (query != null) {
-                    query.setLastSeenAt(System.currentTimeMillis());
-                }
-                return null;
-            }
-        }).continueWith(new LogcatIfError());
+        Fecade.forIssueList().markQueryAsRead(queryId);
     }
 
     @Override
     public void onDestroyView() {
         searchProcedureObserver.unsub();
         super.onDestroyView();
-    }
-
-    private void fetchLatestResults() {
-        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
-            @Override
-            public Object execute(Realm realm) throws Exception {
-                realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
-                        .put("queryId", searchIssueQuery.getId())
-                        .put("syncState", SyncState.NOT_SYNCED)
-                        .put("reset", true)
-                        .put("query", new JSONObject()
-                                .put("id", searchIssueQuery.getId()))
-                );
-                return null;
-            }
-        }).onSuccess(new Continuation<Void, Object>() {
-            @Override
-            public Object then(Task<Void> task) throws Exception {
-                GitHubAPIService.keepAlive(getContext());
-                return null;
-            }
-        });
-    }
-
-    private void fetchMoreResults() {
-        RealmHelper.executeTransaction(new RealmHelper.Transaction() {
-            @Override
-            public Object execute(Realm realm) throws Exception {
-                realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
-                        .put("queryId", searchIssueQuery.getId())
-                        .put("syncState", SyncState.NOT_SYNCED)
-                        .put("reset", false)
-                );
-                return null;
-            }
-        }).onSuccess(new Continuation<Void, Object>() {
-            @Override
-            public Object then(Task<Void> task) throws Exception {
-                GitHubAPIService.keepAlive(getContext());
-                return null;
-            }
-        });
     }
 
     private void onRenderSearchProcedure(SearchIssueProcedure procedure) {
