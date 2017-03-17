@@ -17,10 +17,10 @@ import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer2.service.GitHubViewerService;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmObjectObserver;
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmObjectObserver;
 
 /**
  */

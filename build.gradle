@@ -9,7 +9,7 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath "io.realm:realm-gradle-plugin:2.2.1"
+        classpath "io.realm:realm-gradle-plugin:3.0.0"
     }
 }
 
@@ -17,7 +17,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo' }
-        maven { url 'https://github.com/YusukeIwaki/realm-java-helpers/raw/master/repo' }
+        maven { url 'https://jitpack.io' }
         maven { url "https://clojars.org/repo/" }
     }
 }

@@ -5,9 +5,9 @@ import org.json.JSONObject;
 import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
 import io.realm.RealmObject;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */

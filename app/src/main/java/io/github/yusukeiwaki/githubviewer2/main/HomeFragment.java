@@ -12,8 +12,8 @@ import io.github.yusukeiwaki.githubviewer2.cache.Cache;
 import io.github.yusukeiwaki.githubviewer2.model.User;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer2.renderer.UserRenderer;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
