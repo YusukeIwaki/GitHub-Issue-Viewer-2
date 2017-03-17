@@ -27,8 +27,8 @@ import io.github.yusukeiwaki.githubviewer2.main.dialog.EditQueryDialogFragment;
 import io.github.yusukeiwaki.githubviewer2.model.User;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer2.webapi.GitHubAPI;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 public class MainActivity extends AbstractCurrentUserActivity {
 

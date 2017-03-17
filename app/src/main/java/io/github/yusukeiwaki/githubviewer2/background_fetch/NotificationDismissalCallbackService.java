@@ -4,8 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */

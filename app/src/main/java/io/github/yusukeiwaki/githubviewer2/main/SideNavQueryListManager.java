@@ -9,9 +9,9 @@ import java.util.List;
 
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
 import io.github.yusukeiwaki.githubviewer2.widget.SideMenuQueryItemView;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmListObserver;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmListObserver;
 
 /**
  */

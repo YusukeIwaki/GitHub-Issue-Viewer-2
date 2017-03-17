@@ -8,8 +8,8 @@ import android.view.View;
 import icepick.State;
 import io.github.yusukeiwaki.githubviewer2.cache.CurrentUserData;
 import io.github.yusukeiwaki.githubviewer2.model.User;
+import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
-import jp.co.crowdworks.realm_java_helpers_bolts.RealmHelper;
 
 /**
  */
