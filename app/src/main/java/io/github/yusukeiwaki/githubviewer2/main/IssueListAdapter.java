@@ -2,7 +2,6 @@ package io.github.yusukeiwaki.githubviewer2.main;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import io.github.yusukeiwaki.githubviewer2.R;
+import io.github.yusukeiwaki.githubviewer2.databinding.ListItemIssueBinding;
 import io.github.yusukeiwaki.githubviewer2.model.Issue;
 
 /**
@@ -32,8 +31,8 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
     @Override
     public IssueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_issue, parent, false);
-        return new IssueViewHolder(itemView);
+        ListItemIssueBinding binding = ListItemIssueBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new IssueViewHolder(binding);
     }
 
     @Override

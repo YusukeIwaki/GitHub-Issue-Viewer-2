@@ -1,54 +1,27 @@
 package io.github.yusukeiwaki.githubviewer2.main;
 
 import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import io.github.yusukeiwaki.githubviewer2.LaunchUtil;
-import io.github.yusukeiwaki.githubviewer2.R;
+import io.github.yusukeiwaki.githubviewer2.databinding.ListItemIssueBinding;
 import io.github.yusukeiwaki.githubviewer2.model.Issue;
-import io.github.yusukeiwaki.githubviewer2.renderer.IssueRenderer;
 
 /**
  */
 public class IssueViewHolder extends RecyclerView.ViewHolder {
 
-    private final TextView titleView;
-    private final TextView iconView;
-    private final ImageView avatarView;
-    private final TextView usernameView;
-    private final TextView repoTitleView;
-    private final TextView numberView;
-    private final TextView commentIconView;
-    private final TextView numCommentView;
+    private ListItemIssueBinding binding;
 
-    public IssueViewHolder(View itemView) {
-        super(itemView);
-
-        titleView = (TextView) itemView.findViewById(R.id.title);
-        iconView = (TextView) itemView.findViewById(R.id.icon);
-        avatarView = (ImageView) itemView.findViewById(R.id.user_avatar);
-        usernameView = (TextView) itemView.findViewById(R.id.user_name);
-        repoTitleView = (TextView) itemView.findViewById(R.id.repo_title);
-        numberView = (TextView) itemView.findViewById(R.id.issue_number);
-        commentIconView = (TextView) itemView.findViewById(R.id.comment_icon);
-        numCommentView = (TextView) itemView.findViewById(R.id.num_comment);
+    public IssueViewHolder(ListItemIssueBinding binding) {
+        super(binding.getRoot());
+        this.binding = binding;
     }
 
     public void bind(Issue issue) {
-        new IssueRenderer(itemView.getContext(), issue)
-                .titleInto(titleView)
-                .iconInto(iconView)
-                .userAvatarInto(avatarView)
-                .usernameInto(usernameView)
-                .repoTitleInto(repoTitleView)
-                .numberInto(numberView)
-                .numCommentInto(commentIconView, numCommentView)
-                .stateInto((CardView) itemView);
+        binding.setIssue(issue);
 
         if (issue != null && !TextUtils.isEmpty(issue.getHtml_url())) {
             final Uri uri = Uri.parse(issue.getHtml_url());

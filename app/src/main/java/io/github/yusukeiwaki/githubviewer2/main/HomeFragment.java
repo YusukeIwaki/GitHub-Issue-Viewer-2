@@ -3,21 +3,22 @@ package io.github.yusukeiwaki.githubviewer2.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.ImageView;
 
 import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer2.R;
 import io.github.yusukeiwaki.githubviewer2.cache.Cache;
+import io.github.yusukeiwaki.githubviewer2.databinding.HomeScreenBinding;
 import io.github.yusukeiwaki.githubviewer2.model.User;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
-import io.github.yusukeiwaki.githubviewer2.renderer.UserRenderer;
 import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
 
 /**
  */
 public class HomeFragment extends AbstractCurrentUserFragment {
+    private HomeScreenBinding binding;
+
     public HomeFragment(){}
 
     @Override
@@ -27,12 +28,12 @@ public class HomeFragment extends AbstractCurrentUserFragment {
 
     @Override
     protected void onCreateView(@Nullable Bundle savedInstanceState) {
-
+        binding = HomeScreenBinding.bind(rootView);
     }
 
     @Override
     protected void onCurrentUserUpdated(User user) {
-        new UserRenderer(getContext(), user).avatarInto((ImageView) rootView.findViewById(R.id.current_user_avatar));
+        binding.setUser(user);
 
         if (user != null) {
             final String username = user.getLogin();
