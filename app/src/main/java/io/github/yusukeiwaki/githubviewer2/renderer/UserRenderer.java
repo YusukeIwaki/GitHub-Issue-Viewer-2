@@ -1,39 +1,22 @@
 package io.github.yusukeiwaki.githubviewer2.renderer;
 
-import android.content.Context;
+import android.databinding.BindingAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import io.github.yusukeiwaki.githubviewer2.model.User;
-
 /**
  */
-public class UserRenderer extends AbstractRenderer<User> {
-    public UserRenderer(Context context, User object) {
-        super(context, object);
-    }
-
-    public UserRenderer usernameInto(TextView textView) {
-        if (!shouldHandle(textView)) return this;
-
-        textView.setText(object.getLogin());
-
-        return this;
-    }
-
-    public UserRenderer avatarInto(final ImageView imageView) {
-        if (!shouldHandle(imageView)) return this;
-
-        final String url = object.getAvatar_url();
+public class UserRenderer {
+    @BindingAdapter("userAvatarUrl")
+    public static void loadAvatar(final ImageView imageView, final String url) {
         if (imageView.getTag() != null) {
             String origUrl = (String) imageView.getTag();
-            if (origUrl.equals(url)) return this;
+            if (origUrl.equals(url)) return;
         }
 
-        Picasso.with(context)
+        Picasso.with(imageView.getContext())
                 .load(url)
                 .into(imageView, new Callback() {
                     @Override
@@ -46,6 +29,5 @@ public class UserRenderer extends AbstractRenderer<User> {
 
                     }
                 });
-        return this;
     }
 }

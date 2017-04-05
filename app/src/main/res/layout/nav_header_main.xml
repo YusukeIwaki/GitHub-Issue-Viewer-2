@@ -1,31 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="@drawable/side_nav_bar"
-    android:padding="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="user"
+            type="io.github.yusukeiwaki.githubviewer2.model.User"/>
+    </data>
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        android:gravity="center_vertical">
-        <ImageView
-            android:id="@+id/current_user_avatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="centerCrop" />
+        android:layout_height="160dp"
+        android:background="@drawable/side_nav_bar"
+        android:padding="16dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-        <Space
-            android:layout_width="16dp"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/current_user_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-    </LinearLayout>
-</FrameLayout>
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="centerCrop"
+                bind:userAvatarUrl="@{user.avatar_url}"/>
+
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:text="@{user.login}"/>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

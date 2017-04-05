@@ -6,15 +6,13 @@ import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import io.github.yusukeiwaki.githubviewer2.LaunchUtil;
 import io.github.yusukeiwaki.githubviewer2.R;
 import io.github.yusukeiwaki.githubviewer2.cache.CurrentUserData;
+import io.github.yusukeiwaki.githubviewer2.databinding.NavHeaderMainBinding;
 import io.github.yusukeiwaki.githubviewer2.main.dialog.EditQueryDialogFragment;
 import io.github.yusukeiwaki.githubviewer2.model.User;
-import io.github.yusukeiwaki.githubviewer2.renderer.UserRenderer;
 
 /**
  */
@@ -26,12 +24,14 @@ public class SideNavManager {
     private final MainActivity activity;
     private final ViewGroup rootView;
     private final DrawerHandler drawerHandler;
+    private final NavHeaderMainBinding navHeaderMainBinding;
 
 
     public SideNavManager(MainActivity activity, ViewGroup rootView, DrawerHandler drawerHandler) {
         this.activity = activity;
         this.rootView = rootView;
         this.drawerHandler = drawerHandler;
+        navHeaderMainBinding = NavHeaderMainBinding.bind(rootView.findViewById(R.id.nav_header_main));
     }
 
     public void setup() {
@@ -81,8 +81,6 @@ public class SideNavManager {
     }
 
     public void updateCurrentUser(User currentUser) {
-        new UserRenderer(rootView.getContext(), currentUser)
-                .avatarInto((ImageView) rootView.findViewById(R.id.current_user_avatar))
-                .usernameInto((TextView) rootView.findViewById(R.id.current_user_name));
+        navHeaderMainBinding.setUser(currentUser);
     }
 }
