@@ -6,10 +6,10 @@ import android.view.ViewGroup;
 
 import io.github.yusukeiwaki.githubviewer2.databinding.ListItemIssueBinding;
 import io.github.yusukeiwaki.githubviewer2.model.Issue;
+import io.github.yusukeiwaki.githubviewer2.widget.RealmRecyclerViewAdapter2;
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
 
-public class IssueListAdapter extends RealmRecyclerViewAdapter<Issue, IssueViewHolder> {
+public class IssueListAdapter extends RealmRecyclerViewAdapter2<Issue, IssueViewHolder> {
     public IssueListAdapter(@Nullable OrderedRealmCollection<Issue> data) {
         super(data, true);
     }
