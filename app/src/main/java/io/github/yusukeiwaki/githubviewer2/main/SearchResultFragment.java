@@ -13,6 +13,7 @@ import bolts.Continuation;
 import bolts.Task;
 import io.github.yusukeiwaki.githubviewer2.LogcatIfError;
 import io.github.yusukeiwaki.githubviewer2.R;
+import io.github.yusukeiwaki.githubviewer2.model.Issue;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
@@ -21,6 +22,8 @@ import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmObjectObserver;
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  */
@@ -79,7 +82,13 @@ public class SearchResultFragment extends AbstractMainFragment {
 
     @Override
     protected void onCreateView(@Nullable Bundle savedInstanceState) {
-        issueListAdapter = new IssueListAdapter();
+        issueListAdapter = new IssueListAdapter(new RealmHelper.Query<Issue>() {
+            @Override
+            public RealmResults<Issue> query(Realm realm) {
+                return realm.where(SearchIssueProcedure.class).equalTo("queryId", searchIssueQuery.getId()).findFirst()
+                        .getItems().sort("updated_at", Sort.DESCENDING);
+            }
+        });
 
         final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(getResources().getInteger(R.integer.recyclerview_column_count), StaggeredGridLayoutManager.VERTICAL);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
@@ -194,7 +203,5 @@ public class SearchResultFragment extends AbstractMainFragment {
                 }
             }
         }
-
-        issueListAdapter.updateIssueList(procedure.getItems());
     }
 }
