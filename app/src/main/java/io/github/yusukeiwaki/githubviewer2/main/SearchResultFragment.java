@@ -21,6 +21,7 @@ import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmObjectObserver;
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import io.realm.Sort;
 
 /**
  */
@@ -30,6 +31,8 @@ public class SearchResultFragment extends AbstractMainFragment {
     private SearchIssueQuery searchIssueQuery;
     private RealmObjectObserver<SearchIssueProcedure> searchProcedureObserver;
     private RecyclerView recyclerView;
+    private Realm realm;
+    private SearchIssueProcedure searchIssueProcedure;
     private IssueListAdapter issueListAdapter;
     private LoadMoreScrollListener loadMoreScrollListener;
 
@@ -54,6 +57,8 @@ public class SearchResultFragment extends AbstractMainFragment {
                 return realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
             }
         });
+        realm = Realm.getDefaultInstance();
+        searchIssueProcedure = realm.where(SearchIssueProcedure.class).equalTo("queryId", queryId).findFirst();
         searchProcedureObserver = new RealmObjectObserver<SearchIssueProcedure>() {
             @Override
             protected RealmQuery<SearchIssueProcedure> query(Realm realm) {
@@ -79,7 +84,7 @@ public class SearchResultFragment extends AbstractMainFragment {
 
     @Override
     protected void onCreateView(@Nullable Bundle savedInstanceState) {
-        issueListAdapter = new IssueListAdapter();
+        issueListAdapter = new IssueListAdapter(searchIssueProcedure.getItems().sort("updated_at", Sort.DESCENDING));
 
         final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(getResources().getInteger(R.integer.recyclerview_column_count), StaggeredGridLayoutManager.VERTICAL);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
@@ -128,6 +133,15 @@ public class SearchResultFragment extends AbstractMainFragment {
     public void onDestroyView() {
         searchProcedureObserver.unsub();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (realm != null) {
+            realm.close();
+            realm = null;
+        }
+        super.onDestroy();
     }
 
     private void fetchLatestResults() {
@@ -194,7 +208,5 @@ public class SearchResultFragment extends AbstractMainFragment {
                 }
             }
         }
-
-        issueListAdapter.updateIssueList(procedure.getItems());
     }
 }
