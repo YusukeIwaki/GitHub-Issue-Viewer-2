@@ -35,10 +35,13 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
     @Nullable
     private OrderedRealmCollection<T> adapterData;
 
-    private OrderedRealmCollectionChangeListener createListener() {
-        return new OrderedRealmCollectionChangeListener() {
+    private OrderedRealmCollectionChangeListener<OrderedRealmCollection<T>> createListener() {
+        return new OrderedRealmCollectionChangeListener<OrderedRealmCollection<T>>() {
+
+            private String prevString = null;
+
             @Override
-            public void onChange(Object collection, OrderedCollectionChangeSet changeSet) {
+            public void onChange(OrderedRealmCollection<T> collection, OrderedCollectionChangeSet changeSet) {
                 // null Changes means the async query returns the first time.
                 if (changeSet == null) {
                     notifyDataSetChanged();
@@ -57,6 +60,16 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
                 }
 
                 OrderedCollectionChangeSet.Range[] modifications = changeSet.getChangeRanges();
+                if (modifications.length == 1 && modifications[0].startIndex == 0 && modifications[0].length == collection.size()) {
+                    String currentString = collection.toString();
+                    if (prevString == null || !prevString.equals(currentString)) {
+                        prevString = currentString;
+                    } else {
+                        return;
+                    }
+                } else {
+                    prevString = null;
+                }
                 for (OrderedCollectionChangeSet.Range range : modifications) {
                     notifyItemRangeChanged(range.startIndex, range.length);
                 }
