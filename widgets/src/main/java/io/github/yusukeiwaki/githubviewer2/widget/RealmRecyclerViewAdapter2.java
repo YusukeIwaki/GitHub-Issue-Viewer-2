@@ -23,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollection;
 import io.realm.OrderedRealmCollectionChangeListener;
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.RealmResults;
@@ -30,10 +31,28 @@ import io.realm.RealmResults;
 public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<S> {
 
+    public interface Query<T extends RealmModel> {
+        OrderedRealmCollection<T> queryCollection(Realm realm);
+    }
+    private Realm realm;
+    private Realm getOrCreateRealm() {
+        if (realm == null) {
+            realm = Realm.getDefaultInstance();
+        }
+        return realm;
+    }
+    private final Query<T> query;
+
     private final boolean hasAutoUpdates;
     private final OrderedRealmCollectionChangeListener listener;
     @Nullable
     private OrderedRealmCollection<T> adapterData;
+    private OrderedRealmCollection<T> getOrCreateAdapterData() {
+        if (adapterData == null) {
+            adapterData = query.queryCollection(getOrCreateRealm());
+        }
+        return adapterData;
+    }
 
     private OrderedRealmCollectionChangeListener<OrderedRealmCollection<T>> createListener() {
         return new OrderedRealmCollectionChangeListener<OrderedRealmCollection<T>>() {
@@ -77,12 +96,9 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
         };
     }
 
-    public RealmRecyclerViewAdapter2(@Nullable OrderedRealmCollection<T> data, boolean autoUpdate) {
-        if (data != null && !data.isManaged())
-            throw new IllegalStateException("Only use this adapter with managed RealmCollection, " +
-                    "for un-managed lists you can just use the BaseRecyclerViewAdapter");
-        this.adapterData = data;
-        this.hasAutoUpdates = autoUpdate;
+    public RealmRecyclerViewAdapter2(Query<T> query) {
+        this.query = query;
+        this.hasAutoUpdates = true;
         this.listener = hasAutoUpdates ? createListener() : null;
     }
 
@@ -91,7 +107,7 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
         super.onAttachedToRecyclerView(recyclerView);
         if (hasAutoUpdates && isDataValid()) {
             //noinspection ConstantConditions
-            addListener(adapterData);
+            addListener(getOrCreateAdapterData());
         }
     }
 
@@ -100,13 +116,17 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
         super.onDetachedFromRecyclerView(recyclerView);
         if (hasAutoUpdates && isDataValid()) {
             //noinspection ConstantConditions
-            removeListener(adapterData);
+            removeListener(getOrCreateAdapterData());
+        }
+        if (realm != null) {
+            realm.close();
+            realm = null;
         }
     }
 
     /**
      * Returns the current ID for an item. Note that item IDs are not stable so you cannot rely on the item ID being the
-     * same after notifyDataSetChanged() or {@link #updateData(OrderedRealmCollection)} has been called.
+     * same after notifyDataSetChanged() has been called.
      *
      * @param index position of item in the adapter.
      * @return current item ID.
@@ -119,7 +139,7 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
     @Override
     public int getItemCount() {
         //noinspection ConstantConditions
-        return isDataValid() ? adapterData.size() : 0;
+        return isDataValid() ? getOrCreateAdapterData().size() : 0;
     }
 
     /**
@@ -133,7 +153,7 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
     @Nullable
     public T getItem(int index) {
         //noinspection ConstantConditions
-        return isDataValid() ? adapterData.get(index) : null;
+        return isDataValid() ? getOrCreateAdapterData().get(index) : null;
     }
 
     /**
@@ -143,29 +163,7 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
      */
     @Nullable
     public OrderedRealmCollection<T> getData() {
-        return adapterData;
-    }
-
-    /**
-     * Updates the data associated to the Adapter. Useful when the query has been changed.
-     * If the query does not change you might consider using the automaticUpdate feature.
-     *
-     * @param data the new {@link OrderedRealmCollection} to display.
-     */
-    @SuppressWarnings("WeakerAccess")
-    public void updateData(@Nullable OrderedRealmCollection<T> data) {
-        if (hasAutoUpdates) {
-            if (isDataValid()) {
-                //noinspection ConstantConditions
-                removeListener(adapterData);
-            }
-            if (data != null) {
-                addListener(data);
-            }
-        }
-
-        this.adapterData = data;
-        notifyDataSetChanged();
+        return getOrCreateAdapterData();
     }
 
     private void addListener(@NonNull OrderedRealmCollection<T> data) {
@@ -197,6 +195,6 @@ public abstract class RealmRecyclerViewAdapter2<T extends RealmModel, S extends 
     }
 
     private boolean isDataValid() {
-        return adapterData != null && adapterData.isValid();
+        return getOrCreateAdapterData().isValid();
     }
 }
