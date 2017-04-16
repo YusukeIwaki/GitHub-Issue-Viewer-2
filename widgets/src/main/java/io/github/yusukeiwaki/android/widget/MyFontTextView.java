@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer2.widget;
+package io.github.yusukeiwaki.android.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 /**
  * TextView with font-awesome.
  */
-public class MyFontTextView extends AbstractCustomFontTextView {
+public class MyFontTextView extends MaterialDesignFontTextView {
     public MyFontTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }

@@ -19,5 +19,7 @@ android {
 }
 
 dependencies {
-  compile 'com.android.support:design:25.1.0'
+  compile 'com.android.support:design:25.3.1'
+  compile 'com.github.yusukeiwaki.android-widget:widget-material-design-font:0.0.1'
+  compile 'com.github.yusukeiwaki.android-widget:widget-extras:0.0.1'
 }

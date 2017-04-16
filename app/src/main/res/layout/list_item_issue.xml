@@ -54,7 +54,7 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:text='@{"#" + issue.number}'/>
 
-                    <io.github.yusukeiwaki.githubviewer2.widget.MyFontTextView
+                    <io.github.yusukeiwaki.android.widget.MyFontTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -65,7 +65,7 @@
                         android:enabled="false"/>
                 </LinearLayout>
             </LinearLayout>
-            <io.github.yusukeiwaki.githubviewer2.widget.DividerView
+            <io.github.yusukeiwaki.android.widget.DividerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <LinearLayout
@@ -76,7 +76,7 @@
                 <include layout="@layout/list_item_issue_user"
                     bind:user="@{issue.user}"
                     />
-                <io.github.yusukeiwaki.githubviewer2.widget.MyFontTextView
+                <io.github.yusukeiwaki.android.widget.MyFontTextView
                     android:id="@+id/comment_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
