@@ -24,15 +24,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
-                <io.github.yusukeiwaki.githubviewer2.widget.MaterialFontTextView
+                <io.github.yusukeiwaki.android.widget.MaterialDesignFontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/material_icon_github"
+                    android:text="@string/zmdi_github"
                     android:textSize="32dp"/>
-                <io.github.yusukeiwaki.githubviewer2.widget.MaterialFontTextView
+                <io.github.yusukeiwaki.android.widget.MaterialDesignFontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/material_icon_trending_up"
+                    android:text="@string/zmdi_trending_up"
                     android:textSize="32dp"
                     android:layout_margin="8dp"/>
                 <ImageView
