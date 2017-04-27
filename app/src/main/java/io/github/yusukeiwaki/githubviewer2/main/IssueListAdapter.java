@@ -1,5 +1,6 @@
 package io.github.yusukeiwaki.githubviewer2.main;
 
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -29,6 +30,26 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void smoothUpdateIssueList(List<Issue> newIssueList) {
+        if (issueList.isEmpty() || newIssueList.isEmpty()) {
+            updateIssueList(newIssueList);
+            return;
+        }
+
+        List<Issue> sortedNewIssueList = new ArrayList<>(newIssueList);
+        Collections.sort(sortedNewIssueList, new Comparator<Issue>() {
+            @Override
+            public int compare(Issue issue1, Issue issue2) {
+                return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
+            }
+        });
+
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new IssueListDiffCallback(issueList, sortedNewIssueList));
+        issueList.clear();
+        issueList.addAll(sortedNewIssueList);
+        result.dispatchUpdatesTo(this);
+    }
+
     @Override
     public IssueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ListItemIssueBinding binding = ListItemIssueBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
@@ -43,5 +64,37 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
     @Override
     public int getItemCount() {
         return issueList.size();
+    }
+
+
+    private static class IssueListDiffCallback extends DiffUtil.Callback {
+
+        private final List<Issue> oldData;
+        private final List<Issue> newData;
+
+        public IssueListDiffCallback(List<Issue> oldData, List<Issue> newData) {
+            this.oldData = oldData;
+            this.newData = newData;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldData.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newData.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldData.get(oldItemPosition).getId() == newData.get(newItemPosition).getId();
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldData.get(oldItemPosition).isTheSame(newData.get(newItemPosition));
+        }
     }
 }
