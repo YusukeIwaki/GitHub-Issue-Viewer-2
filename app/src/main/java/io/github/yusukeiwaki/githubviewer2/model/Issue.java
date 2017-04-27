@@ -150,4 +150,10 @@ public class Issue extends RealmObject {
     public void setPull_request(String pull_request) {
         this.pull_request = pull_request;
     }
+
+    public boolean isTheSame(Issue other) {
+        return getTitle().equals(other.getTitle())
+                && getState().equals(other.getState())
+                && getUpdated_at().equals(other.getUpdated_at());
+    }
 }
