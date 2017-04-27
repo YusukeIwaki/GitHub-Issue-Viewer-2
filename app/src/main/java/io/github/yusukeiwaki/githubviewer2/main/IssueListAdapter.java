@@ -19,7 +19,8 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
     private final List<Issue> issueList = new ArrayList<>();
 
     public void updateIssueList(List<Issue> newIssueList) {
-        Collections.sort(newIssueList, new Comparator<Issue>() {
+        List<Issue> sortedNewIssueList = new ArrayList<>(newIssueList);
+        Collections.sort(sortedNewIssueList, new Comparator<Issue>() {
             @Override
             public int compare(Issue issue1, Issue issue2) {
                 return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
@@ -27,12 +28,12 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         });
         if (issueList.isEmpty() || newIssueList.isEmpty()) {
             issueList.clear();
-            issueList.addAll(newIssueList);
+            issueList.addAll(sortedNewIssueList);
             notifyDataSetChanged();
         } else {
-            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new IssueListDiffCallback(issueList, newIssueList));
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new IssueListDiffCallback(issueList, sortedNewIssueList));
             issueList.clear();
-            issueList.addAll(newIssueList);
+            issueList.addAll(sortedNewIssueList);
             result.dispatchUpdatesTo(this);
         }
     }
