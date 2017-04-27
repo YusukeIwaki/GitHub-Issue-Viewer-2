@@ -195,6 +195,10 @@ public class SearchResultFragment extends AbstractMainFragment {
             }
         }
 
-        issueListAdapter.updateIssueList(procedure.getItems());
+        if (recyclerView.computeVerticalScrollOffset() > 0) {
+            issueListAdapter.smoothUpdateIssueList(procedure.getItems());
+        } else {
+            issueListAdapter.updateIssueList(procedure.getItems());
+        }
     }
 }

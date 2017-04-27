@@ -19,6 +19,23 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
     private final List<Issue> issueList = new ArrayList<>();
 
     public void updateIssueList(List<Issue> newIssueList) {
+        issueList.clear();
+        issueList.addAll(newIssueList);
+        Collections.sort(issueList, new Comparator<Issue>() {
+            @Override
+            public int compare(Issue issue1, Issue issue2) {
+                return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    public void smoothUpdateIssueList(List<Issue> newIssueList) {
+        if (issueList.isEmpty() || newIssueList.isEmpty()) {
+            updateIssueList(newIssueList);
+            return;
+        }
+
         List<Issue> sortedNewIssueList = new ArrayList<>(newIssueList);
         Collections.sort(sortedNewIssueList, new Comparator<Issue>() {
             @Override
@@ -26,16 +43,11 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
                 return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
             }
         });
-        if (issueList.isEmpty() || newIssueList.isEmpty()) {
-            issueList.clear();
-            issueList.addAll(sortedNewIssueList);
-            notifyDataSetChanged();
-        } else {
-            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new IssueListDiffCallback(issueList, sortedNewIssueList));
-            issueList.clear();
-            issueList.addAll(sortedNewIssueList);
-            result.dispatchUpdatesTo(this);
-        }
+
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new IssueListDiffCallback(issueList, sortedNewIssueList));
+        issueList.clear();
+        issueList.addAll(sortedNewIssueList);
+        result.dispatchUpdatesTo(this);
     }
 
     @Override
