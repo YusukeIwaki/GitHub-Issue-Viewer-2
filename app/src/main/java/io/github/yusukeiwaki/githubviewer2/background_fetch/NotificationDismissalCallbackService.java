@@ -24,8 +24,8 @@ public class NotificationDismissalCallbackService extends IntentService {
             public Object execute(Realm realm) throws Exception {
                 long currentTime = System.currentTimeMillis();
                 SearchIssueQuery query = realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
-                if (query != null && query.getLastSeenAt() <= currentTime) {
-                    query.setLastSeenAt(currentTime);
+                if (query != null && query.lastSeenAt <= currentTime) {
+                    query.lastSeenAt = currentTime;
                 }
                 return null;
             }

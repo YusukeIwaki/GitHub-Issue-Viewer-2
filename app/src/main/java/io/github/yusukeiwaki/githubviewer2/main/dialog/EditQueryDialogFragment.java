@@ -57,8 +57,8 @@ public class EditQueryDialogFragment extends DialogFragment {
     private void onSetupDialog() {
         final Dialog dialog = getDialog();
         if (originalQuery != null) {
-            ((TextView) dialog.findViewById(R.id.editor_title)).setText(originalQuery.getTitle());
-            ((TextView) dialog.findViewById(R.id.editor_query)).setText(originalQuery.getQ());
+            ((TextView) dialog.findViewById(R.id.editor_title)).setText(originalQuery.title);
+            ((TextView) dialog.findViewById(R.id.editor_query)).setText(originalQuery.q);
         }
 
         dialog.findViewById(R.id.btn_add_search_query).setOnClickListener(new View.OnClickListener() {
@@ -74,12 +74,12 @@ public class EditQueryDialogFragment extends DialogFragment {
     }
 
     private void insertQueryRecord(final String title, final String queryText) {
-        final long id = originalQuery != null ? originalQuery.getId() : -1;
+        final long id = originalQuery != null ? originalQuery.id : -1;
         final long queryId = (id == -1) ? System.currentTimeMillis() : id;
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Exception {
-                SearchIssueQuery.insertRecord(realm, queryId, title, queryText);
+                SearchIssueQuery.insertOrUpdateRecord(realm, queryId, title, queryText);
                 return null;
             }
         }).onSuccess(new Continuation<Void, Object>() {

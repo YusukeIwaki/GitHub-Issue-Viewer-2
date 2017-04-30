@@ -47,7 +47,7 @@ public class BackgroundFetchJob extends Job {
             public Object execute(Realm realm) throws Exception {
                 RealmResults<SearchIssueProcedure> procedures = realm.where(SearchIssueProcedure.class).isNotNull("query").findAll();
                 for (SearchIssueProcedure procedure : procedures) {
-                    procedure.setSyncState(SyncState.NOT_SYNCED);
+                    procedure.syncState = SyncState.NOT_SYNCED;
                 }
                 return null;
             }
@@ -64,7 +64,7 @@ public class BackgroundFetchJob extends Job {
                     protected void onCollectionChanged(List<SearchIssueProcedure> list) {
                         boolean success = false;
                         for (SearchIssueProcedure procedure : list) {
-                            switch (procedure.getSyncState()) {
+                            switch (procedure.syncState) {
                                 case SyncState.NOT_SYNCED:
                                 case SyncState.SYNCING:
                                     return;

@@ -26,7 +26,7 @@ public class BackgroundFetchService extends IntentService {
             public Object execute(Realm realm) throws Exception {
                 RealmResults<SearchIssueProcedure> procedures = realm.where(SearchIssueProcedure.class).isNotNull("query").findAll();
                 for (SearchIssueProcedure procedure : procedures) {
-                    procedure.setSyncState(SyncState.NOT_SYNCED);
+                    procedure.syncState = SyncState.NOT_SYNCED;
                 }
                 return null;
             }

@@ -36,7 +36,7 @@ public class HomeFragment extends AbstractCurrentUserFragment {
         binding.setUser(user);
 
         if (user != null) {
-            final String username = user.getLogin();
+            final String username = user.login;
             rootView.findViewById(R.id.add_query_involves_me).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -54,7 +54,7 @@ public class HomeFragment extends AbstractCurrentUserFragment {
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Exception {
-                SearchIssueQuery.insertRecord(realm, queryId, "Me", "involves:" + username);
+                SearchIssueQuery.insertOrUpdateRecord(realm, queryId, "Me", "involves:" + username);
                 return null;
             }
         }).onSuccess(new Continuation<Void, Object>() {

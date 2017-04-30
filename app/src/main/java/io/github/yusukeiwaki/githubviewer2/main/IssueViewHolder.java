@@ -23,8 +23,8 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     public void bind(Issue issue) {
         binding.setIssue(issue);
 
-        if (issue != null && !TextUtils.isEmpty(issue.getHtml_url())) {
-            final Uri uri = Uri.parse(issue.getHtml_url());
+        if (issue != null && !TextUtils.isEmpty(issue.html_url)) {
+            final Uri uri = Uri.parse(issue.html_url);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
