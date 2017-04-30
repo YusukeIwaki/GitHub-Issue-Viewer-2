@@ -73,7 +73,7 @@ abstract class AbstractCurrentUserFragment extends AbstractMainFragment {
     }
 
     private void updateCurrentUserWith(@Nullable User user) {
-        this.currentUserId = user != null ? user.getId() : -1;
+        this.currentUserId = user != null ? user.id : -1;
         this.currentUser = user;
     }
 

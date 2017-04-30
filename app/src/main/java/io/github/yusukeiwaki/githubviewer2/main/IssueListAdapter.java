@@ -24,7 +24,7 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         Collections.sort(issueList, new Comparator<Issue>() {
             @Override
             public int compare(Issue issue1, Issue issue2) {
-                return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
+                return issue2.updated_at.compareTo(issue1.updated_at);
             }
         });
         notifyDataSetChanged();
@@ -40,7 +40,7 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         Collections.sort(sortedNewIssueList, new Comparator<Issue>() {
             @Override
             public int compare(Issue issue1, Issue issue2) {
-                return issue2.getUpdated_at().compareTo(issue1.getUpdated_at());
+                return issue2.updated_at.compareTo(issue1.updated_at);
             }
         });
 
@@ -89,7 +89,7 @@ public class IssueListAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
         @Override
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            return oldData.get(oldItemPosition).getId() == newData.get(newItemPosition).getId();
+            return oldData.get(oldItemPosition).id == newData.get(newItemPosition).id;
         }
 
         @Override

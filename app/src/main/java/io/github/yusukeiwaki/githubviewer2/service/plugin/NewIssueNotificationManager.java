@@ -62,19 +62,19 @@ public class NewIssueNotificationManager extends AbstractRealmModelObserver<Sear
     }
 
     private boolean shouldNotify(SearchIssueProcedure procedure) {
-        final long lastSeen = procedure.getQuery().getLastSeenAt();
-        for (Issue issue : procedure.getItems())  {
-            if (issue.getUpdated_at().getTime() > lastSeen) return true;
+        final long lastSeen = procedure.query.lastSeenAt;
+        for (Issue issue : procedure.items)  {
+            if (issue.updated_at.getTime() > lastSeen) return true;
         }
         return false;
     }
 
     private int getNotificationIdFor(SearchIssueProcedure procedure) {
-        return (int) (procedure.getQueryId() % Integer.MAX_VALUE);
+        return (int) (procedure.queryId % Integer.MAX_VALUE);
     }
 
     private Task<Notification> generateNotificationFor(final SearchIssueProcedure procedure) {
-        return getIconUrlFrom(procedure.getItems())
+        return getIconUrlFrom(procedure.items)
                 .onSuccessTask(new Continuation<String, Task<Bitmap>>() {
                     @Override
                     public Task<Bitmap> then(Task<String> task) throws Exception {
@@ -87,19 +87,19 @@ public class NewIssueNotificationManager extends AbstractRealmModelObserver<Sear
                     public Task<Notification> then(Task<Bitmap> task) throws Exception {
 
                         int numUnread = 0;
-                        final long lastSeen = procedure.getQuery().getLastSeenAt();
-                        final long queryId = procedure.getQueryId();
+                        final long lastSeen = procedure.query.lastSeenAt;
+                        final long queryId = procedure.queryId;
                         StringBuilder sb = new StringBuilder();
                         sb.append(context.getResources().getString(R.string.notification_title_unread_issue));
-                        for (Issue issue : procedure.getItems())  {
-                            if (issue.getUpdated_at().getTime() > lastSeen) {
+                        for (Issue issue : procedure.items)  {
+                            if (issue.updated_at.getTime() > lastSeen) {
                                 numUnread++;
-                                sb.append("\n").append(String.format("[%s#%d] ", issue.getRepositoryName(), issue.getNumber())).append(issue.getTitle());
+                                sb.append("\n").append(String.format("[%s#%d] ", issue.getRepositoryName(), issue.number)).append(issue.title);
                             }
                         }
 
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                                .setContentTitle(procedure.getQuery().getTitle())
+                                .setContentTitle(procedure.query.title)
                                 .setContentText(sb.toString())
                                 .setNumber(numUnread)
                                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))

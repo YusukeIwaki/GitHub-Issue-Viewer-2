@@ -62,10 +62,10 @@ public class SideNavQueryListManager {
         container.removeAllViews();
         for (SearchIssueQuery query : queryList) {
             SideMenuQueryItemView view = new SideMenuQueryItemView(context);
-            view.setItemId(query.getId());
+            view.setItemId(query.id);
             view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            view.setTitle(query.getTitle());
-            view.setUnreadCount(query.getUnreadCount());
+            view.setTitle(query.title);
+            view.setUnreadCount(query.unreadCount);
             container.addView(view);
 
             view.setOnClickListener(new View.OnClickListener() {

@@ -6,8 +6,8 @@ import io.realm.annotations.PrimaryKey;
 /**
  */
 public class Label extends RealmObject {
-    @PrimaryKey private long id;
-    private String url;
-    private String name;
-    private String color;
+    @PrimaryKey public long id;
+    public String url;
+    public String name;
+    public String color;
 }

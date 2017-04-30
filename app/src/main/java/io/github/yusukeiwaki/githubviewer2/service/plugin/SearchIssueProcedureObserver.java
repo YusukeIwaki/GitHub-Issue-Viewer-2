@@ -35,7 +35,7 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
             public Object execute(Realm realm) throws Exception {
                 RealmResults<SearchIssueProcedure> results = realm.where(SearchIssueProcedure.class).equalTo("syncState", SyncState.SYNCING).findAll();
                 for (SearchIssueProcedure procedure : results) {
-                    procedure.setSyncState(SyncState.NOT_SYNCED);
+                    procedure.syncState = SyncState.NOT_SYNCED;
                 }
                 return null;
             }
@@ -50,7 +50,7 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
     @Override
     protected void handleItems(@NonNull List<SearchIssueProcedure> items) {
         SearchIssueProcedure item = items.get(0);
-        new MyTask(item).execute(item.getQueryId());
+        new MyTask(item).execute(item.queryId);
     }
 
     private class MyTask extends AbstractPluginTask<SearchIssueProcedure> {
@@ -62,12 +62,12 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
 
         public MyTask(SearchIssueProcedure item) {
             super(item);
-            SearchIssueQuery query = item.getQuery();
-            queryText = query.getQ();
-            sort = query.getSort();
-            order = query.getOrder();
-            shouldResetResult = item.isReset();
-            page = shouldResetResult ? 1 : query.getPage();
+            SearchIssueQuery query = item.query;
+            queryText = query.q;
+            sort = query.sort;
+            order = query.order;
+            shouldResetResult = item.reset;
+            page = shouldResetResult ? 1 : query.page;
         }
 
         @Override
@@ -88,8 +88,8 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
                                         JSONArray itemsJson = resultJson.getJSONArray("items");
 
                                         SearchIssueProcedure procedure = realm.where(SearchIssueProcedure.class).equalTo("queryId", primaryKey).findFirst();
-                                        for(Issue issue : procedure.getItems()) {
-                                            itemsJson.put(new JSONObject().put("id", issue.getId()));
+                                        for(Issue issue : procedure.items) {
+                                            itemsJson.put(new JSONObject().put("id", issue.id));
                                         }
                                     }
                                     realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, resultJson);

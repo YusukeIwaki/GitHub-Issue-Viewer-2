@@ -69,7 +69,7 @@ public class SearchResultFragment extends AbstractMainFragment {
 
     @Override
     protected void onSetupToolbar() {
-        activityToolbar.setTitle(searchIssueQuery.getTitle());
+        activityToolbar.setTitle(searchIssueQuery.title);
     }
 
     @Override
@@ -111,13 +111,13 @@ public class SearchResultFragment extends AbstractMainFragment {
     public void onStart() {
         super.onStart();
 
-        final long queryId = searchIssueQuery.getId();
+        final long queryId = searchIssueQuery.id;
         RealmHelper.executeTransaction(new RealmHelper.Transaction() {
             @Override
             public Object execute(Realm realm) throws Exception {
                 SearchIssueQuery query = realm.where(SearchIssueQuery.class).equalTo("id", queryId).findFirst();
                 if (query != null) {
-                    query.setLastSeenAt(System.currentTimeMillis());
+                    query.lastSeenAt = System.currentTimeMillis();
                 }
                 return null;
             }
@@ -135,11 +135,11 @@ public class SearchResultFragment extends AbstractMainFragment {
             @Override
             public Object execute(Realm realm) throws Exception {
                 realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
-                        .put("queryId", searchIssueQuery.getId())
+                        .put("queryId", searchIssueQuery.id)
                         .put("syncState", SyncState.NOT_SYNCED)
                         .put("reset", true)
                         .put("query", new JSONObject()
-                                .put("id", searchIssueQuery.getId()))
+                                .put("id", searchIssueQuery.id))
                 );
                 return null;
             }
@@ -157,7 +157,7 @@ public class SearchResultFragment extends AbstractMainFragment {
             @Override
             public Object execute(Realm realm) throws Exception {
                 realm.createOrUpdateObjectFromJson(SearchIssueProcedure.class, new JSONObject()
-                        .put("queryId", searchIssueQuery.getId())
+                        .put("queryId", searchIssueQuery.id)
                         .put("syncState", SyncState.NOT_SYNCED)
                         .put("reset", false)
                 );
@@ -175,7 +175,7 @@ public class SearchResultFragment extends AbstractMainFragment {
     private void onRenderSearchProcedure(SearchIssueProcedure procedure) {
         if (procedure == null) return;
 
-        int syncState = procedure.getSyncState();
+        int syncState = procedure.syncState;
 
         SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         if (syncState == SyncState.NOT_SYNCED || syncState == SyncState.SYNCING) {
@@ -190,15 +190,15 @@ public class SearchResultFragment extends AbstractMainFragment {
                 loadMoreScrollListener.setLoadingDone();
                 if (syncState == SyncState.SYNCED) {
                     recyclerView.removeOnScrollListener(loadMoreScrollListener);
-                    if (procedure.getItems().size() < procedure.getTotal_count()) recyclerView.addOnScrollListener(loadMoreScrollListener);
+                    if (procedure.items.size() < procedure.total_count) recyclerView.addOnScrollListener(loadMoreScrollListener);
                 }
             }
         }
 
         if (recyclerView.computeVerticalScrollOffset() > 0) {
-            issueListAdapter.smoothUpdateIssueList(procedure.getItems());
+            issueListAdapter.smoothUpdateIssueList(procedure.items);
         } else {
-            issueListAdapter.updateIssueList(procedure.getItems());
+            issueListAdapter.updateIssueList(procedure.items);
         }
     }
 }
