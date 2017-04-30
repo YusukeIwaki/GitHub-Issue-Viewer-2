@@ -1,4 +1,4 @@
-package io.github.yusukeiwaki.githubviewer2.service;
+package io.github.yusukeiwaki.githubviewer2.service.plugin;
 
 import org.json.JSONObject;
 
@@ -11,10 +11,10 @@ import io.realm.RealmObject;
 
 /**
  */
-public abstract class PluginTask<T extends RealmObject> {
+abstract class AbstractPluginTask<T extends RealmObject> {
     protected final T item;
 
-    public PluginTask(T item) {
+    public AbstractPluginTask(T item) {
         this.item = item;
     }
 

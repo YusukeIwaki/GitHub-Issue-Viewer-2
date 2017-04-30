@@ -15,7 +15,6 @@ import io.github.yusukeiwaki.githubviewer2.model.Issue;
 import io.github.yusukeiwaki.githubviewer2.model.SyncState;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueProcedure;
 import io.github.yusukeiwaki.githubviewer2.model.internal.SearchIssueQuery;
-import io.github.yusukeiwaki.githubviewer2.service.PluginTask;
 import io.github.yusukeiwaki.githubviewer2.webapi.GitHubAPI;
 import io.github.yusukeiwaki.realm_java_helpers_bolts.RealmHelper;
 import io.realm.Realm;
@@ -48,7 +47,13 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
         return realm.where(SearchIssueProcedure.class).equalTo("syncState", SyncState.NOT_SYNCED);
     }
 
-    private class MyTask extends PluginTask<SearchIssueProcedure> {
+    @Override
+    protected void handleItems(@NonNull List<SearchIssueProcedure> items) {
+        SearchIssueProcedure item = items.get(0);
+        new MyTask(item).execute(item.getQueryId());
+    }
+
+    private class MyTask extends AbstractPluginTask<SearchIssueProcedure> {
         private String queryText;
         private String sort;
         private String order;
@@ -106,10 +111,4 @@ public class SearchIssueProcedureObserver extends AbstractRealmModelObserver<Sea
             return SearchIssueProcedure.class;
         }
     };
-
-    @Override
-    protected void handleItems(@NonNull List<SearchIssueProcedure> items) {
-        SearchIssueProcedure item = items.get(0);
-        new MyTask(item).execute(item.getQueryId());
-    }
 }
